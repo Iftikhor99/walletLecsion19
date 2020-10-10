@@ -82,11 +82,25 @@ func main() {
 
 	// fmt.Println(account.Balance)
 
-	err = svc.ImportFromFile("data/readme.txt")
-	log.Print(err)	
+	// wd, err := os.Getwd()
+	// if err != nil {
+	// 	log.Print(err)
+	// 	return
+	// }
+	// log.Print(wd)
+
+	err = svc.ImportFromFile("c:/projects/wallet/data/readme.txt")
+	if err != nil {
+	 	log.Print(err)
+	 	return
+	 }
+		
 	
-	err = svc.ExportToFile("data/message.txt")
-	log.Print(err)
+	err = svc.ExportToFile("c:/projects/wallet/data/message.txt")
+	if err != nil {
+		log.Print(err)
+		return
+	}
 	
 
 
