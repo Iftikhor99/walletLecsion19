@@ -1,12 +1,14 @@
 package main
 
 import (
+//	"io/ioutil"
+	"path/filepath"
 //	"github.com/Iftikhor99/wallet/v1/pkg/types"
 //	"strings"
 //	"strconv"
 //	"io"
 	"log"
-//	"os"
+	"os"
 	"fmt"
 	"github.com/Iftikhor99/wallet/v1/pkg/wallet"
 )
@@ -33,11 +35,11 @@ func main() {
 	fmt.Println(accountTest.Balance)
 
 	
-	accountTest , err = svc.RegisterAccount("+992000000002")
-	if err != nil {
-		fmt.Println(err)
-		return
-	} 
+	// accountTest , err = svc.RegisterAccount("+992000000002")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// } 
 
 	err = svc.Deposit(accountTest.ID, 200_000_00)
 	if err != nil {
@@ -52,12 +54,12 @@ func main() {
 	fmt.Println(accountTest.Balance)
 
 
-	// newP, ee2 := svc.Pay(account.ID,10_000_00,"food")
+	newP, ee2 := svc.Pay(accountTest.ID,10_000_00,"food")
 
 	
-	// fmt.Println(account.Balance)
-	// fmt.Println(newP)
-	// fmt.Println(ee2)
+	fmt.Println(accountTest.Balance)
+	fmt.Println(newP)
+	fmt.Println(ee2)
 
 	// newP2, ee3 := svc.FindPaymentByID(newP.ID)
 	// fmt.Println(newP2)
@@ -72,9 +74,9 @@ func main() {
 	// fmt.Println(newP3.Amount)
 	// fmt.Println(account.Balance)
 
-	// fav, errFv := svc.FavoritePayment(newP3.ID, "Tcell")
-	// fmt.Println(errFv)
-	// fmt.Println(fav)
+	fav, errFv := svc.FavoritePayment(newP.ID, "Tcell")
+	fmt.Println(errFv)
+	fmt.Println(fav)
 
 	// newP4, eeFv2 := svc.PayFromFavorite("fav.ID")
 	// fmt.Println(eeFv2)
@@ -82,31 +84,51 @@ func main() {
 
 	// fmt.Println(account.Balance)
 
-	// wd, err := os.Getwd()
-	// if err != nil {
-	// 	log.Print(err)
-	// 	return
-	// }
-	// log.Print(wd)
-
-	err = svc.ImportFromFile("c:/projects/wallet/data/readme.txt")
-	if err != nil {
-	 	log.Print(err)
-	 	return
-	 }
-		
 	
-	err = svc.ExportToFile("c:/projects/wallet/data/message.txt")
+	abs, err := filepath.Abs("data/readme.txt")
+
+	if err != nil {
+		log.Print(err)
+		return
+	}
+   
+	wd, err := os.Getwd()
 	if err != nil {
 		log.Print(err)
 		return
 	}
 	
+	log.Print(wd)
+	log.Print(abs)
 
+	// err = ioutil.WriteFile("c:/projects/wallet/data/readme1.txt", []byte(accountTest.ID), 0600)
+	// if err != nil {
+	// 	log.Print(err)
+	// 	return
+	// }
+
+
+	// err = svc.ImportFromFile("c:/projects/wallet/data/accounts.dump")
+	// if err != nil {
+	//  	log.Print(err)
+	//  	return
+	//  }
 
 	
+	// err = svc.Export(wd)
+	// if err != nil {
+	// 	log.Print(err)
+	// 	return
+	// }
 
+	err = svc.Import("c:/projects/wallet/data/")
+	if err != nil {
+	 	log.Print(err)
+	 	return
+	}
 	
+
+
 	
 
 }
