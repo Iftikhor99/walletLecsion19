@@ -513,9 +513,9 @@ func (s *Service) Export(dir string) error {
 	}
 
 	lenFav := len(s.favorites)
-
-	dirFavorite := dir + "/favorites.dump"
+	
 	if lenFav != 0 {
+		dirFavorite := dir + "/favorites.dump"
 		fileFavorites, err := os.Create(dirFavorite)
 		if err != nil {
 			log.Print(err)
