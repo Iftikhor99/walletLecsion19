@@ -364,7 +364,7 @@ func (s *Service) Export(dir string) error {
 	var err = errors.New("Error")
 	err = nil
 	lenAcou := len(s.accounts)
-	
+
 	if lenAcou != 0 {
 
 		dirAccount := dir + "/accounts.dump"
@@ -610,80 +610,78 @@ func (s *Service) Import(dir string) error {
 	log.Print(dirAccount)
 	if err != nil {
 		log.Print(err)
-		return ErrFileNotFound
+		err = ErrFileNotFound
 	}
+	if err != ErrFileNotFound {
+		defer func() {
+			err := fileAccount.Close()
+			if err != nil {
+				log.Print(err)
+			}
+		}()
 
-	defer func() {
-		err := fileAccount.Close()
-		if err != nil {
-			log.Print(err)
+		log.Printf("%#v", fileAccount)
+
+		content := make([]byte, 0)
+		buf := make([]byte, 4)
+		for {
+			read, err := fileAccount.Read(buf)
+			if err == io.EOF {
+				break
+			}
+			content = append(content, buf[:read]...)
 		}
-	}()
 
-	log.Printf("%#v", fileAccount)
+		data := string(content)
+		newData := strings.Split(data, "|")
+		//log.Print(data)
+		//log.Print(newData)
 
-	content := make([]byte, 0)
-	buf := make([]byte, 4)
-	for {
-		read, err := fileAccount.Read(buf)
-		if err == io.EOF {
-			break
+		for ind1, stroka := range newData {
+			//log.Print(stroka)
+			account := &types.Account{}
+			newData2 := strings.Split(stroka, ";")
+			for ind, stroka2 := range newData2 {
+				// if stroka2 == "" {
+				// 	return ErrPhoneRegistered
+				// }
+				//log.Print(stroka2)
+				if ind == 0 {
+					id, _ := strconv.ParseInt(stroka2, 10, 64)
+					account.ID = id
+				}
+				if ind == 1 {
+					account.Phone = types.Phone(stroka2)
+				}
+				if ind == 2 {
+					balance, _ := strconv.ParseInt(stroka2, 10, 64)
+					account.Balance = types.Money(balance)
+
+				}
+
+				log.Print(ind1)
+
+			}
+			errExist := 1
+			for _, accountCheck := range s.accounts {
+
+				if accountCheck.ID == account.ID {
+					accountCheck.Phone = account.Phone
+					accountCheck.Balance = account.Balance
+					errExist = 0
+				}
+
+			}
+			if errExist == 1 {
+				s.accounts = append(s.accounts, account)
+			}
 		}
-		content = append(content, buf[:read]...)
+		for _, account := range s.accounts {
+			//	if account.Phone == phone {
+			log.Print(account)
+			//	}
+		}
 	}
-
-	data := string(content)
-	newData := strings.Split(data, "|")
-	//log.Print(data)
-	//log.Print(newData)
-
-	for ind1, stroka := range newData {
-		//log.Print(stroka)
-		account := &types.Account{}
-		newData2 := strings.Split(stroka, ";")
-		for ind, stroka2 := range newData2 {
-			// if stroka2 == "" {
-			// 	return ErrPhoneRegistered
-			// }
-			//log.Print(stroka2)
-			if ind == 0 {
-				id, _ := strconv.ParseInt(stroka2, 10, 64)
-				account.ID = id
-			}
-			if ind == 1 {
-				account.Phone = types.Phone(stroka2)
-			}
-			if ind == 2 {
-				balance, _ := strconv.ParseInt(stroka2, 10, 64)
-				account.Balance = types.Money(balance)
-
-			}
-
-			
-			log.Print(ind1)
-			
-
-		}
-		errExist := 1
-		for _, accountCheck := range s.accounts {
-			
-			if accountCheck.ID == account.ID {
-				accountCheck.Phone = account.Phone
-				accountCheck.Balance = account.Balance
-				errExist = 0
-			}
-
-		}
-		if errExist == 1 {
-			s.accounts = append(s.accounts, account)
-		}
-	}
-	for _, account := range s.accounts {
-		//	if account.Phone == phone {
-		log.Print(account)
-		//	}
-	}
-
 
 	dirPayment := dir + "/payments.dump"
 	filePayments, err := os.Open(dirPayment)
@@ -691,89 +689,87 @@ func (s *Service) Import(dir string) error {
 		log.Print(err)
 		return ErrFileNotFound
 	}
+	if err != ErrFileNotFound {
+		defer func() {
+			err := filePayments.Close()
+			if err != nil {
+				log.Print(err)
+			}
+		}()
 
-	defer func() {
-		err := filePayments.Close()
-		if err != nil {
-			log.Print(err)
+		log.Printf("%#v", filePayments)
+
+		contentPayment := make([]byte, 0)
+		bufPayment := make([]byte, 4)
+		for {
+			read, err := filePayments.Read(bufPayment)
+			if err == io.EOF {
+				break
+			}
+			contentPayment = append(contentPayment, bufPayment[:read]...)
 		}
-	}()
 
-	log.Printf("%#v", filePayments)
+		dataPayment := string(contentPayment)
+		newDataPayment := strings.Split(dataPayment, "|")
+		//log.Print(data)
+		//log.Print(newData)
 
-	contentPayment := make([]byte, 0)
-	bufPayment := make([]byte, 4)
-	for {
-		read, err := filePayments.Read(bufPayment)
-		if err == io.EOF {
-			break
+		for ind1, stroka := range newDataPayment {
+			//log.Print(stroka)
+			payment := &types.Payment{}
+			newData2 := strings.Split(stroka, ";")
+			for ind, stroka2 := range newData2 {
+				// if stroka2 == "" {
+				// 	return ErrPhoneRegistered
+				// }
+				//log.Print(stroka2)
+				if ind == 0 {
+					//id, _ := stroka2
+					payment.ID = stroka2
+				}
+				if ind == 1 {
+					accountID, _ := strconv.ParseInt(stroka2, 10, 64)
+					payment.AccountID = int64(accountID)
+				}
+
+				if ind == 2 {
+					balance, _ := strconv.ParseInt(stroka2, 10, 64)
+					payment.Amount = types.Money(balance)
+				}
+
+				if ind == 3 {
+					payment.Category = types.PaymentCategory(stroka2)
+				}
+
+				if ind == 4 {
+					payment.Status = types.PaymentStatus(stroka2)
+				}
+
+				log.Print(ind1)
+
+			}
+			errExist := 1
+			for _, paymentCheck := range s.payments {
+
+				if paymentCheck.ID == payment.ID {
+					paymentCheck.AccountID = payment.AccountID
+					paymentCheck.Amount = payment.Amount
+					paymentCheck.Category = payment.Category
+					paymentCheck.Status = payment.Status
+					errExist = 0
+				}
+
+			}
+			if errExist == 1 {
+				s.payments = append(s.payments, payment)
+			}
 		}
-		contentPayment = append(contentPayment, bufPayment[:read]...)
+		for _, payment := range s.payments {
+			//	if account.Phone == phone {
+			log.Print(payment)
+			//	}
+		}
 	}
-
-	dataPayment := string(contentPayment)
-	newDataPayment := strings.Split(dataPayment, "|")
-	//log.Print(data)
-	//log.Print(newData)
-
-	for ind1, stroka := range newDataPayment {
-		//log.Print(stroka)
-		payment := &types.Payment{}
-		newData2 := strings.Split(stroka, ";")
-		for ind, stroka2 := range newData2 {
-			// if stroka2 == "" {
-			// 	return ErrPhoneRegistered
-			// }
-			//log.Print(stroka2)
-			if ind == 0 {
-				//id, _ := stroka2
-				payment.ID = stroka2
-			}
-			if ind == 1 {
-				accountID, _ := strconv.ParseInt(stroka2, 10, 64)
-				payment.AccountID = int64(accountID) 
-			}
-
-			if ind == 2 {
-				balance, _ := strconv.ParseInt(stroka2, 10, 64)
-				payment.Amount = types.Money(balance)
-			}
-
-			if ind == 3 {
-				payment.Category = types.PaymentCategory(stroka2)
-			}
-
-			if ind == 4 {
-				payment.Status = types.PaymentStatus(stroka2)
-			}
-			
-			log.Print(ind1)
-			
-
-		}
-		errExist := 1
-		for _, paymentCheck := range s.payments {
-			
-			if paymentCheck.ID == payment.ID {
-				paymentCheck.AccountID = payment.AccountID
-				paymentCheck.Amount = payment.Amount
-				paymentCheck.Category = payment.Category
-				paymentCheck.Status = payment.Status
-				errExist = 0
-			}
-
-		}
-		if errExist == 1 {
-			s.payments = append(s.payments, payment)
-		}
-	}
-	for _, payment := range s.payments {
-		//	if account.Phone == phone {
-		log.Print(payment)
-		//	}
-	}
-
-
 
 	dirFavorite := dir + "/favorites.dump"
 	fileFavorites, err := os.Open(dirFavorite)
@@ -781,89 +777,86 @@ func (s *Service) Import(dir string) error {
 		log.Print(err)
 		return ErrFileNotFound
 	}
+	if err != ErrFileNotFound {
+		defer func() {
+			err := fileFavorites.Close()
+			if err != nil {
+				log.Print(err)
+			}
+		}()
 
-	defer func() {
-		err := fileFavorites.Close()
-		if err != nil {
-			log.Print(err)
+		log.Printf("%#v", fileFavorites)
+
+		contentFavorite := make([]byte, 0)
+		bufFavorite := make([]byte, 4)
+		for {
+			read, err := fileFavorites.Read(bufFavorite)
+			if err == io.EOF {
+				break
+			}
+			contentFavorite = append(contentFavorite, bufFavorite[:read]...)
 		}
-	}()
 
-	log.Printf("%#v", fileFavorites)
+		dataFavorite := string(contentFavorite)
+		newDataFavorite := strings.Split(dataFavorite, "|")
+		//log.Print(data)
+		//log.Print(newData)
 
-	contentFavorite := make([]byte, 0)
-	bufFavorite := make([]byte, 4)
-	for {
-		read, err := fileFavorites.Read(bufFavorite)
-		if err == io.EOF {
-			break
+		for ind1, stroka := range newDataFavorite {
+			//log.Print(stroka)
+			favorite := &types.Favorite{}
+			newData2 := strings.Split(stroka, ";")
+			for ind, stroka2 := range newData2 {
+				// if stroka2 == "" {
+				// 	return ErrPhoneRegistered
+				// }
+				//log.Print(stroka2)
+				if ind == 0 {
+					//id, _ := stroka2
+					favorite.ID = stroka2
+				}
+				if ind == 1 {
+					accountID, _ := strconv.ParseInt(stroka2, 10, 64)
+					favorite.AccountID = int64(accountID)
+				}
+
+				if ind == 2 {
+					favorite.Name = stroka2
+				}
+				if ind == 3 {
+					balance, _ := strconv.ParseInt(stroka2, 10, 64)
+					favorite.Amount = types.Money(balance)
+				}
+
+				if ind == 4 {
+					favorite.Category = types.PaymentCategory(stroka2)
+				}
+
+				log.Print(ind1)
+
+			}
+			errExist := 1
+			for _, favoriteCheck := range s.favorites {
+
+				if favoriteCheck.ID == favorite.ID {
+					favoriteCheck.AccountID = favorite.AccountID
+					favoriteCheck.Name = favorite.Name
+					favoriteCheck.Amount = favorite.Amount
+					favoriteCheck.Category = favorite.Category
+					errExist = 0
+				}
+
+			}
+			if errExist == 1 {
+				s.favorites = append(s.favorites, favorite)
+			}
 		}
-		contentFavorite = append(contentFavorite, bufFavorite[:read]...)
+		for _, favorite := range s.favorites {
+			//	if account.Phone == phone {
+			log.Print(favorite)
+			//	}
+		}
 	}
-
-	dataFavorite := string(contentFavorite)
-	newDataFavorite := strings.Split(dataFavorite, "|")
-	//log.Print(data)
-	//log.Print(newData)
-
-	for ind1, stroka := range newDataFavorite {
-		//log.Print(stroka)
-		favorite := &types.Favorite{}
-		newData2 := strings.Split(stroka, ";")
-		for ind, stroka2 := range newData2 {
-			// if stroka2 == "" {
-			// 	return ErrPhoneRegistered
-			// }
-			//log.Print(stroka2)
-			if ind == 0 {
-				//id, _ := stroka2
-				favorite.ID = stroka2
-			}
-			if ind == 1 {
-				accountID, _ := strconv.ParseInt(stroka2, 10, 64)
-				favorite.AccountID = int64(accountID) 
-			}
-
-			if ind == 2 {
-				favorite.Name = stroka2
-			}
-			if ind == 3 {
-				balance, _ := strconv.ParseInt(stroka2, 10, 64)
-				favorite.Amount = types.Money(balance)
-			}
-
-			if ind == 4 {
-				favorite.Category = types.PaymentCategory(stroka2)
-			}
-
-			
-			
-			log.Print(ind1)
-			
-
-		}
-		errExist := 1
-		for _, favoriteCheck := range s.favorites {
-			
-			if favoriteCheck.ID == favorite.ID {
-				favoriteCheck.AccountID = favorite.AccountID
-				favoriteCheck.Name = favorite.Name
-				favoriteCheck.Amount = favorite.Amount
-				favoriteCheck.Category = favorite.Category
-				errExist = 0
-			}
-
-		}
-		if errExist == 1 {
-			s.favorites = append(s.favorites, favorite)
-		}
-	}
-	for _, favorite := range s.favorites {
-		//	if account.Phone == phone {
-		log.Print(favorite)
-		//	}
-	}
-
 	return nil
 
 }
