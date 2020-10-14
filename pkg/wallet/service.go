@@ -775,7 +775,7 @@ func (s *Service) Import(dir string) error {
 	fileFavorites, err := os.Open(dirFavorite)
 	if err != nil {
 		log.Print(err)
-		return ErrFileNotFound
+		err = ErrFileNotFound
 	}
 	if err != ErrFileNotFound {
 		defer func() {
