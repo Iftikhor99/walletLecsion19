@@ -610,7 +610,7 @@ func (s *Service) Import(dir string) error {
 	log.Print(dirAccount)
 	if err != nil {
 		log.Print(err)
-	//	return err
+		return ErrFileNotFound
 	}
 
 	defer func() {
@@ -689,7 +689,7 @@ func (s *Service) Import(dir string) error {
 	filePayments, err := os.Open(dirPayment)
 	if err != nil {
 		log.Print(err)
-		
+		return ErrFileNotFound
 	}
 
 	defer func() {
@@ -779,7 +779,7 @@ func (s *Service) Import(dir string) error {
 	fileFavorites, err := os.Open(dirFavorite)
 	if err != nil {
 		log.Print(err)
-
+		return ErrFileNotFound
 	}
 
 	defer func() {
