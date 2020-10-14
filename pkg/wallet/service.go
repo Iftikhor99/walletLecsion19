@@ -743,7 +743,7 @@ func (s *Service) Import(dir string) error {
 				payment.Category = types.PaymentCategory(stroka2)
 			}
 
-			if ind == 3 {
+			if ind == 4 {
 				payment.Status = types.PaymentStatus(stroka2)
 			}
 			
@@ -794,7 +794,7 @@ func (s *Service) Import(dir string) error {
 	contentFavorite := make([]byte, 0)
 	bufFavorite := make([]byte, 4)
 	for {
-		read, err := filePayments.Read(bufFavorite)
+		read, err := fileFavorites.Read(bufFavorite)
 		if err == io.EOF {
 			break
 		}
