@@ -115,17 +115,17 @@ func main() {
 	//  }
 
 	
-	err = svc.Export(wd)
-	if err != nil {
-		log.Print(err)
-		return
-	}
-
-	// err = svc.Import(wd)
+	// err = svc.Export(wd)
 	// if err != nil {
-	//  	log.Print(err)
-	//  	return
+	// 	log.Print(err)
+	// 	return
 	// }
+
+	err = svc.Import(wd)
+	if err != nil {
+	 	log.Print(err)
+	 	return
+	}
 	
 
 
