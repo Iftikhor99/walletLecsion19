@@ -74,9 +74,9 @@ func main() {
 	// fmt.Println(newP3.Amount)
 	// fmt.Println(account.Balance)
 
-	fav, errFv := svc.FavoritePayment(newP.ID, "Tcell")
-	fmt.Println(errFv)
-	fmt.Println(fav)
+	// fav, errFv := svc.FavoritePayment(newP.ID, "Tcell")
+	// fmt.Println(errFv)
+	// fmt.Println(fav)
 
 	// newP4, eeFv2 := svc.PayFromFavorite("fav.ID")
 	// fmt.Println(eeFv2)
