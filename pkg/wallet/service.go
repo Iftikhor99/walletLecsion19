@@ -363,11 +363,12 @@ func (s *Service) Export(dir string) error {
 	// }
 	var err = errors.New("Error")
 	err = nil
-	lenAcou := len(s.payments)
+	lenAcou := len(s.accounts)
+	
 	if lenAcou != 0 {
 
-		dirAccount := dir + "/data/accounts.dump"
-		log.Print(dir)
+		dirAccount := dir + "/accounts.dump"
+		log.Print(dirAccount)
 
 		fileAccounts, err := os.Create(dirAccount)
 		if err != nil {
@@ -376,7 +377,6 @@ func (s *Service) Export(dir string) error {
 		}
 
 		defer func() {
-
 			if cerr := fileAccounts.Close(); err != nil {
 				log.Print(cerr)
 			}
@@ -429,7 +429,7 @@ func (s *Service) Export(dir string) error {
 	lenPay := len(s.payments)
 	if lenPay != 0 {
 
-		dirPayment := dir + "/data/payments.dump"
+		dirPayment := dir + "/payments.dump"
 		filePayments, err := os.Create(dirPayment)
 		if err != nil {
 			log.Print(err)
@@ -514,7 +514,7 @@ func (s *Service) Export(dir string) error {
 
 	lenFav := len(s.favorites)
 
-	dirFavorite := dir + "/data/favorites.dump"
+	dirFavorite := dir + "/favorites.dump"
 	if lenFav != 0 {
 		fileFavorites, err := os.Create(dirFavorite)
 		if err != nil {
@@ -605,8 +605,9 @@ func (s *Service) Export(dir string) error {
 //Import for
 func (s *Service) Import(dir string) error {
 
-	dirAccount := dir + "accounts.dump"
+	dirAccount := dir + "/accounts.dump"
 	fileAccount, err := os.Open(dirAccount)
+	log.Print(dirAccount)
 	if err != nil {
 		log.Print(err)
 	//	return err
@@ -684,7 +685,7 @@ func (s *Service) Import(dir string) error {
 	}
 
 
-	dirPayment := dir + "payments.dump"
+	dirPayment := dir + "/payments.dump"
 	filePayments, err := os.Open(dirPayment)
 	if err != nil {
 		log.Print(err)
@@ -774,7 +775,7 @@ func (s *Service) Import(dir string) error {
 
 
 
-	dirFavorite := dir + "favorites.dump"
+	dirFavorite := dir + "/favorites.dump"
 	fileFavorites, err := os.Open(dirFavorite)
 	if err != nil {
 		log.Print(err)
