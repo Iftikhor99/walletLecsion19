@@ -875,7 +875,7 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 	err = nil
 	record := float64(record1)
 
-	lenPay := len(s.payments)
+	lenPay := len(payments)
 	if lenPay != 0 {
 		//	for i := 1; i < 3; i++ {
 		//		str := strconv.FormatInt(int64(i), 10)
@@ -917,14 +917,7 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 				}()
 			}
 
-			if index != 0 {
-				_, err = filePayments.Write([]byte("\n"))
-				if err != nil {
-					log.Print(err)
-
-				}
-
-			}
+			
 
 			_, err = filePayments.Write([]byte(string(payment.ID)))
 			if err != nil {
@@ -979,6 +972,16 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 				log.Print(err)
 
 			}
+
+			if (fileNumber >= fileNumber1) || (fileNumber1 == 1) {
+				_, err = filePayments.Write([]byte("\n"))
+				if err != nil {
+					log.Print(err)
+
+				}
+
+			}
+
 			fileNumber1 = fileNumber
 			//		}
 		}
@@ -997,15 +1000,18 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 //ExportAccountHistory for
 func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error) {
 	var foundPayments []types.Payment
+	
 	for _, payment := range s.payments {
+		log.Print(accountID)
+		log.Print(payment.AccountID)
 		if payment.AccountID == accountID {
 			foundPayments = append(foundPayments, *payment)
 		//	return foundPayments, nil
-		} else {
-			return nil, ErrPaymentNotFound	
 		}
 	}
-
+	if foundPayments == nil {
+		return nil, ErrPaymentNotFound
+	}
 	return foundPayments, nil
 }
 
