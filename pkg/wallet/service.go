@@ -879,8 +879,12 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 	if lenPay != 0 {
 		//	for i := 1; i < 3; i++ {
 		//		str := strconv.FormatInt(int64(i), 10)
-
-		dirPayment := dir + "/payments1.dump"
+		dirPayment := ""
+		if lenPay < record1 {
+			dirPayment = dir + "/payments.dump"
+		} else {
+			dirPayment = dir + "/payments1.dump"
+		}
 		filePayments, err := os.Create(dirPayment)
 		if err != nil {
 			log.Print(err)
