@@ -16,16 +16,16 @@ import (
 
 func main() {
 	svc := &wallet.Service{}
-	accountTest , err := svc.RegisterAccount("+992000000001")
-	if err != nil {
-		fmt.Println(err)
+	accountTest1, err1 := svc.RegisterAccount("+992000000001")
+	if err1 != nil {
+		fmt.Println(err1)
 		return
 	} 
 
 	
-	err = svc.Deposit(accountTest.ID, 100_000_00)
-	if err != nil {
-		switch err {
+	err1 = svc.Deposit(accountTest1.ID, 100_000_00)
+	if err1 != nil {
+		switch err1 {
 		case wallet.ErrAmountMustBePositive:
 			fmt.Println("Сумма должна быть положительной")
 		case wallet.ErrAccountNotFound:
@@ -33,11 +33,13 @@ func main() {
 		}		
 		return
 	}
-	fmt.Println(accountTest.Balance)
+	fmt.Println(accountTest1.Balance)
 
-	//newP, ee2 := svc.Pay(accountTest1.ID,6_000_00,"car")
-	
-	accountTest , err = svc.RegisterAccount("+992000000002")
+	newP1, ee21 := svc.Pay(accountTest1.ID,6_000_00,"car")
+	fmt.Println(newP1)
+	fmt.Println(ee21)
+
+	accountTest , err := svc.RegisterAccount("+992000000002")
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -135,13 +137,13 @@ func main() {
 	// }
 	
 
-	paymentsFound, err := svc.ExportAccountHistory(newP.AccountID)
+	paymentsFound, err := svc.ExportAccountHistory(newP1.AccountID)
 	if err != nil {
 		log.Print(err)
 		return
 	}
 
-	err = svc.HistoryToFiles(paymentsFound,wd,3)
+	err = svc.HistoryToFiles(paymentsFound,wd,2)
 	if err != nil {
 		log.Print(err)
 		return
