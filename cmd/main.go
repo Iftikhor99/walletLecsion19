@@ -22,6 +22,7 @@ func main() {
 		return
 	} 
 
+	
 	err = svc.Deposit(accountTest.ID, 100_000_00)
 	if err != nil {
 		switch err {
@@ -34,12 +35,13 @@ func main() {
 	}
 	fmt.Println(accountTest.Balance)
 
+	//newP, ee2 := svc.Pay(accountTest1.ID,6_000_00,"car")
 	
-	// accountTest , err = svc.RegisterAccount("+992000000002")
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return
-	// } 
+	accountTest , err = svc.RegisterAccount("+992000000002")
+	if err != nil {
+		fmt.Println(err)
+		return
+	} 
 
 	err = svc.Deposit(accountTest.ID, 200_000_00)
 	if err != nil {
@@ -54,8 +56,13 @@ func main() {
 	fmt.Println(accountTest.Balance)
 
 
-	newP, ee2 := svc.Pay(accountTest.ID,10_000_00,"food")
-
+	
+	newP, ee2 := svc.Pay(accountTest.ID,1_000_00,"food")
+	newP, ee2 = svc.Pay(accountTest.ID,2_000_00,"food")
+	newP, ee2 = svc.Pay(accountTest.ID,3_000_00,"food")
+	newP, ee2 = svc.Pay(accountTest.ID,4_000_00,"food")
+	newP, ee2 = svc.Pay(accountTest.ID,5_000_00,"food")
+	newP, ee2 = svc.Pay(accountTest.ID,1_000_00,"auto")
 	
 	fmt.Println(accountTest.Balance)
 	fmt.Println(newP)
@@ -121,14 +128,23 @@ func main() {
 	// 	return
 	// }
 
-	err = svc.Import(wd)
+	// err = svc.Import(wd)
+	// if err != nil {
+	//  	log.Print(err)
+	//  	return
+	// }
+	
+
+	paymentsFound, err := svc.ExportAccountHistory(newP.AccountID)
 	if err != nil {
-	 	log.Print(err)
-	 	return
+		log.Print(err)
+		return
+	}
+
+	err = svc.HistoryToFiles(paymentsFound,wd,3)
+	if err != nil {
+		log.Print(err)
+		return
 	}
 	
-
-
-	
-
 }
