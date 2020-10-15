@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"math"
 	//	"path/filepath"
 	"io"
 	"log"
@@ -387,7 +388,7 @@ func (s *Service) Export(dir string) error {
 			// fmt.Println(newP2)
 			// fmt.Println(ee3)
 			if index != 0 {
-				_, err = fileAccounts.Write([]byte("|"))
+				_, err = fileAccounts.Write([]byte("\n"))
 				if err != nil {
 					log.Print(err)
 
@@ -447,7 +448,7 @@ func (s *Service) Export(dir string) error {
 			// fmt.Println(newP2)
 
 			if index != 0 {
-				_, err = filePayments.Write([]byte("|"))
+				_, err = filePayments.Write([]byte("\n"))
 				if err != nil {
 					log.Print(err)
 
@@ -513,7 +514,7 @@ func (s *Service) Export(dir string) error {
 	}
 
 	lenFav := len(s.favorites)
-	
+
 	if lenFav != 0 {
 		dirFavorite := dir + "/favorites.dump"
 		fileFavorites, err := os.Create(dirFavorite)
@@ -533,7 +534,7 @@ func (s *Service) Export(dir string) error {
 			// fmt.Println(newP2)
 
 			if index != 0 {
-				_, err = fileFavorites.Write([]byte("|"))
+				_, err = fileFavorites.Write([]byte("\n"))
 				if err != nil {
 					log.Print(err)
 
@@ -633,7 +634,7 @@ func (s *Service) Import(dir string) error {
 		}
 
 		data := string(content)
-		newData := strings.Split(data, "|")
+		newData := strings.Split(data, "\n")
 		//log.Print(data)
 		//log.Print(newData)
 
@@ -710,7 +711,7 @@ func (s *Service) Import(dir string) error {
 		}
 
 		dataPayment := string(contentPayment)
-		newDataPayment := strings.Split(dataPayment, "|")
+		newDataPayment := strings.Split(dataPayment, "\n")
 		//log.Print(data)
 		//log.Print(newData)
 
@@ -798,7 +799,7 @@ func (s *Service) Import(dir string) error {
 		}
 
 		dataFavorite := string(contentFavorite)
-		newDataFavorite := strings.Split(dataFavorite, "|")
+		newDataFavorite := strings.Split(dataFavorite, "\n")
 		//log.Print(data)
 		//log.Print(newData)
 
@@ -860,3 +861,151 @@ func (s *Service) Import(dir string) error {
 	return nil
 
 }
+
+//HistoryToFiles for
+func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 int) error {
+
+	// dir, err := filepath.Abs(dir)
+
+	// if err != nil {
+	// 	log.Print(err)
+
+	// }
+	var err = errors.New("Error")
+	err = nil
+	record := float64(record1)
+
+	lenPay := len(s.payments)
+	if lenPay != 0 {
+		//	for i := 1; i < 3; i++ {
+		//		str := strconv.FormatInt(int64(i), 10)
+
+		dirPayment := dir + "/payments1.dump"
+		filePayments, err := os.Create(dirPayment)
+		if err != nil {
+			log.Print(err)
+
+		}
+
+		defer func() {
+			if cerr := filePayments.Close(); err != nil {
+				log.Print(cerr)
+			}
+		}()
+		fileNumber1 := 1
+		for index, payment := range payments {
+			//	account, err = s.FindAccountByID(int64(ind))
+			// fmt.Println(newP2)
+
+			fileNumber := int(math.Ceil(float64(index+1) / record))
+			//log.Print(fileNumber)
+			log.Printf("fileNumber %v", fileNumber)
+			if fileNumber > fileNumber1 {
+				log.Printf("fileNumber1 %v", fileNumber1)
+				str := strconv.FormatInt(int64(fileNumber), 10)
+				dirPayment = dir + "/payments" + str + ".dump"
+				filePayments, err = os.Create(dirPayment)
+				if err != nil {
+					log.Print(err)
+
+				}
+
+				defer func() {
+					if cerr := filePayments.Close(); err != nil {
+						log.Print(cerr)
+					}
+				}()
+			}
+
+			if index != 0 {
+				_, err = filePayments.Write([]byte("\n"))
+				if err != nil {
+					log.Print(err)
+
+				}
+
+			}
+
+			_, err = filePayments.Write([]byte(string(payment.ID)))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(";"))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(strconv.FormatInt(int64(payment.AccountID), 10)))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(";"))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(strconv.FormatInt(int64(payment.Amount), 10)))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(";"))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(string(payment.Category)))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(";"))
+			if err != nil {
+				log.Print(err)
+
+			}
+
+			_, err = filePayments.Write([]byte(string(payment.Status)))
+			if err != nil {
+				log.Print(err)
+
+			}
+			fileNumber1 = fileNumber
+			//		}
+		}
+	}
+
+	for _, payment := range payments {
+		//	if account.Phone == phone {
+		log.Print(payment)
+		//	}
+	}
+
+	return err
+
+}
+
+//ExportAccountHistory for
+func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error) {
+	var foundPayments []types.Payment
+	for _, payment := range s.payments {
+		if payment.AccountID == accountID {
+			foundPayments = append(foundPayments, *payment)
+		//	return foundPayments, nil
+		} else {
+			return nil, ErrPaymentNotFound	
+		}
+	}
+
+	return foundPayments, nil
+}
+
