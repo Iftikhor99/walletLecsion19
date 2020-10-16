@@ -2,6 +2,8 @@ package wallet
 
 import (
 	"math"
+	"sync"
+
 	//	"path/filepath"
 	"io"
 	"log"
@@ -921,8 +923,6 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 				}()
 			}
 
-			
-
 			_, err = filePayments.Write([]byte(string(payment.ID)))
 			if err != nil {
 				log.Print(err)
@@ -1004,13 +1004,13 @@ func (s *Service) HistoryToFiles(payments []types.Payment, dir string, record1 i
 //ExportAccountHistory for
 func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error) {
 	var foundPayments []types.Payment
-	
+
 	for _, payment := range s.payments {
 		log.Print(accountID)
 		log.Print(payment.AccountID)
 		if payment.AccountID == accountID {
 			foundPayments = append(foundPayments, *payment)
-		//	return foundPayments, nil
+			//	return foundPayments, nil
 		}
 	}
 	if foundPayments == nil {
@@ -1019,3 +1019,61 @@ func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error)
 	return foundPayments, nil
 }
 
+// //Simple for
+// func (s *Service) Simple() {
+// 	lenPay := len(s.payments)
+// 	allPayments := s.payments
+// 	log.Print(s.payments)
+// 	log.Print(lenPay)
+// 	log.Print(allPayments[0].Amount)
+// }
+
+//SumPayments for
+func (s *Service) SumPayments(goroutines int) types.Money {
+	// err := types.Money(5)
+	// return err
+	wg := sync.WaitGroup{}
+
+	wg.Add(goroutines) // cKonbKOo ropyTMH péM
+
+	mu := sync.Mutex{}
+	sum := types.Money(0)
+	lenPay := len(s.payments)
+	numberOfPaymentPerRoutine := lenPay / goroutines
+	//timesOfPayments := 1
+	allPayments := s.payments
+	index := 0
+	for i := 0; i < goroutines; i++ {
+		go func() {
+			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
+			val := types.Money(0)
+
+			for ; index < numberOfPaymentPerRoutine; index++ {
+				if index < lenPay{			
+					val += allPayments[index].Amount
+				}
+			}
+			mu.Lock()
+			defer mu.Unlock()
+			sum += val // TOMbKO B KOHUE 3anvcbiBaeM CYMMY
+			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
+		}()
+	}
+	// go func() {
+	// 	defer wg.Done() // coo6waem, 4TO 3aKoH4UNN
+	// 	val := types.Money(0)
+	// 	for index, payment := range s.payments {
+	// 		if index > numberOfPaymentPerRoutine{
+	// 			break
+	// 		}
+	// 		val += payment.Amount
+	// 	}
+	// 	mu.Lock()
+	// 	defer mu.Unlock()
+	// 	sum += val // TOMbKO B KOHWE 3anucbiBaeM CyMMy
+
+	// }()
+
+	wg.Wait()
+	return sum
+}
