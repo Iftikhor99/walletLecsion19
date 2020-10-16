@@ -1106,7 +1106,7 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	allPayments := foundPayments
 	index := 0
 	for i := 0; i < goroutines; i++ {
-		newPayments := []types.Payment{}
+		var newPayments []types.Payment
 		go func() {
 			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
 
