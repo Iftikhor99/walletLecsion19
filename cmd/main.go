@@ -62,7 +62,7 @@ func main() {
 	newP, ee2 = svc.Pay(accountTest.ID, 3_000_00, "food")
 	newP, ee2 = svc.Pay(accountTest.ID, 4_000_00, "food")
 	newP, ee2 = svc.Pay(accountTest.ID, 5_000_00, "food")
-	//newP, ee2 = svc.Pay(accountTest.ID, 1_000_00, "auto")
+	newP, ee2 = svc.Pay(accountTest.ID, 6_000_00, "auto")
 
 	fmt.Println(accountTest.Balance)
 	fmt.Println(newP)
@@ -146,6 +146,7 @@ func main() {
 	pay, err8 := svc.FilterPayments(2,2) 
 	log.Print(pay)
 	log.Print(err8)
+	log.Print(len(pay))
 
 }
 
