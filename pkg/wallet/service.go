@@ -1086,10 +1086,11 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	var newPayments []types.Payment
 	for _, payment := range s.payments {
 		if payment.AccountID == accountID {
-			foundPayments = append(foundPayments, *payment)			
-		}else {
-			return nil, ErrAccountNotFound
-		}
+			foundPayments = append(foundPayments, *payment)	
+		}			
+	}
+	if foundPayments == nil {
+		return nil, ErrAccountNotFound
 	}
 	wg := sync.WaitGroup{}
 
