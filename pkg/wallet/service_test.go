@@ -181,6 +181,20 @@ func TestService_PayFromFavorite_success(t *testing.T) {
 }
 
 
+func BenchmarkSumPayments(b *testing.B) {
+	s := newTestService()
+	result := s.SumPayments(2)
+	fmt.Println(result)
+	want := types.Money(2100000)
+	for i := 0; i < b.N; i++ {
+		result := s.SumPayments(1)
+		if result != want {
+			b.Fatalf("invalid result, got %v, want %v", result, want)
+		}
+	}
+}
+
+
 func (s *testService) addAccount(data testAccount) (*types.Account, []*types.Payment, error) {
 	// perucTpupyemM TaM nonb30BaTena
 	account, err := s.RegisterAccount (data.phone)
@@ -207,3 +221,4 @@ func (s *testService) addAccount(data testAccount) (*types.Account, []*types.Pay
 	
 	return account, payments, nil
 }
+
