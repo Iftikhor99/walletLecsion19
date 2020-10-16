@@ -1078,3 +1078,61 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 	wg.Wait()
 	return sum
 }
+
+//FilterPayments for
+func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payment, error) {
+	
+	var foundPayments []types.Payment
+	var newPayments []types.Payment
+	for _, payment := range s.payments {
+		if payment.AccountID == accountID {
+			foundPayments = append(foundPayments, *payment)			
+		}else {
+			return nil, ErrAccountNotFound
+		}
+	}
+	wg := sync.WaitGroup{}
+
+	wg.Add(goroutines) // cKonbKOo ropyTMH péM
+
+	mu := sync.Mutex{}
+	
+	lenPay := len(foundPayments)
+	numberOfPaymentPerRoutine := lenPay / goroutines
+	//timesOfPayments := 1
+	allPayments := foundPayments
+	index := 0
+	for i := 0; i < goroutines; i++ {
+		go func() {
+			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
+			
+			for ; index < numberOfPaymentPerRoutine; index++ {
+				if index < lenPay{	
+					newPayments = append(newPayments, allPayments[index])		
+					
+				}
+			}
+			mu.Lock()
+			defer mu.Unlock()
+			
+			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
+		}()
+	}
+	// go func() {
+	// 	defer wg.Done() // coo6waem, 4TO 3aKoH4UNN
+	// 	val := types.Money(0)
+	// 	for index, payment := range s.payments {
+	// 		if index > numberOfPaymentPerRoutine{
+	// 			break
+	// 		}
+	// 		val += payment.Amount
+	// 	}
+	// 	mu.Lock()
+	// 	defer mu.Unlock()
+	// 	sum += val // TOMbKO B KOHWE 3anucbiBaeM CyMMy
+
+	// }()
+
+	wg.Wait()
+	return newPayments, nil
+}
