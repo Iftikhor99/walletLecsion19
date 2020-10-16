@@ -192,6 +192,34 @@ func BenchmarkSumPayments(b *testing.B) {
 	}
 }
 
+// func BenchmarkFilterPayments(b *testing.B) {
+// 	s := newTestService()
+// 	accountTest, err := s.RegisterAccount("+992000000001")
+// 	if err != nil {
+// 		b.Error(err)
+// 		return
+// 	}
+
+// 	newP, err := s.Pay(accountTest.ID, 1_000_00, "food")
+// 	newP, err = s.Pay(accountTest.ID, 2_000_00, "food")
+// 	newP, err = s.Pay(accountTest.ID, 3_000_00, "food")
+// 	newP, err = s.Pay(accountTest.ID, 4_000_00, "food")
+// 	newP, err = s.Pay(accountTest.ID, 5_000_00, "food")
+// 	newP, err = s.Pay(accountTest.ID, 6_000_00, "auto")
+// 	fmt.Println(newP)
+// 	want := s.payments
+// 	for i := 0; i < b.N; i++ {
+// 		result, err := s.FilterPayments(accountTest.ID,2)
+// 		if err != nil {
+// 			b.Error(err)
+// 			return
+// 		}
+// 		if result != nil {
+// 			b.Fatalf("invalid result, got %v, want %v", result, want)
+// 		}
+// 	}
+// }
+
 func (s *testService) addAccount(data testAccount) (*types.Account, []*types.Payment, error) {
 	// perucTpupyemM TaM nonb30BaTena
 	account, err := s.RegisterAccount(data.phone)

@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-	//	"fmt"
+//	"fmt"
 	"errors"
 
 	"github.com/Iftikhor99/wallet/v1/pkg/types"
@@ -1106,16 +1106,18 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	allPayments := foundPayments
 	index := 0
 	for i := 0; i < goroutines; i++ {
-		
+		lenPay := len(foundPayments)
 		go func() {
 			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
 			var newPayments []types.Payment
-			for ; index < numberOfPaymentPerRoutine; index++ {
+			for i:=0 ; index < numberOfPaymentPerRoutine; i++ {
 				if index < lenPay {
 					newPayments = append(newPayments, allPayments[index])
-
+				//	fmt.Printf("newPayments %v", newPayments)
 				}
+				index++
 			}
+		//	fmt.Printf("newPayments %v", newPayments)
 			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
 			mu.Lock()
 			defer mu.Unlock()
