@@ -1084,6 +1084,7 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	
 	var foundPayments []types.Payment
 	var newPayments []types.Payment
+	var allfoundPayments []types.Payment
 	for _, payment := range s.payments {
 		if payment.AccountID == accountID {
 			foundPayments = append(foundPayments, *payment)	
@@ -1115,7 +1116,7 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 			}
 			mu.Lock()
 			defer mu.Unlock()
-			
+			allfoundPayments = append(allfoundPayments, newPayments...) 
 			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
 		}()
 	}
