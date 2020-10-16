@@ -183,9 +183,7 @@ func TestService_PayFromFavorite_success(t *testing.T) {
 
 func BenchmarkSumPayments(b *testing.B) {
 	s := newTestService()
-	result := s.SumPayments(2)
-	fmt.Println(result)
-	want := types.Money(2100000)
+	want := types.Money(0)
 	for i := 0; i < b.N; i++ {
 		result := s.SumPayments(1)
 		if result != want {

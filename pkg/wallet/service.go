@@ -1019,14 +1019,15 @@ func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error)
 	return foundPayments, nil
 }
 
-// //Simple for
-// func (s *Service) Simple() {
-// 	lenPay := len(s.payments)
-// 	allPayments := s.payments
-// 	log.Print(s.payments)
-// 	log.Print(lenPay)
-// 	log.Print(allPayments[0].Amount)
-// }
+//Simple for
+func (s *Service) Simple() types.Money {
+	lenPay := len(s.payments)
+	allPayments := s.payments
+	log.Print(s.payments)
+	log.Print(lenPay)
+	log.Print(allPayments[0].Amount)
+	return allPayments[0].Amount
+}
 
 //SumPayments for
 func (s *Service) SumPayments(goroutines int) types.Money {
