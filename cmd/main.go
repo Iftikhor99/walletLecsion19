@@ -143,7 +143,7 @@ func main() {
 	// 	return
 	// }
 	//svc.Simple()
-	pay, err8 := svc.FilterPayments(1,2) 
+	pay, err8 := svc.FilterPayments(2,2) 
 	log.Print(pay)
 	log.Print(err8)
 
