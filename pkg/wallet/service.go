@@ -1106,10 +1106,10 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	allPayments := foundPayments
 	index := 0
 	for i := 0; i < goroutines; i++ {
-		var newPayments []types.Payment
+		
 		go func() {
 			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
-
+			var newPayments []types.Payment
 			for ; index < numberOfPaymentPerRoutine; index++ {
 				if index < lenPay {
 					newPayments = append(newPayments, allPayments[index])
