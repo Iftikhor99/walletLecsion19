@@ -1119,12 +1119,12 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 				index++
 			}
 		//	fmt.Printf("newPayments %v", newPayments)
-			
+			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine	
 			mu.Lock()
-			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
-			allfoundPayments = append(allfoundPayments, newPayments...)
-			defer mu.Unlock()
 			
+			
+			defer mu.Unlock()
+			allfoundPayments = append(allfoundPayments, newPayments...)
 
 		}(i, newPayments)
 	}
