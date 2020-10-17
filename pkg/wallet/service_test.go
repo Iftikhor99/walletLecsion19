@@ -226,17 +226,17 @@ func BenchmarkFilterPayments(b *testing.B) {
 		//return
 	}
 
-	newP, err := s.Pay(accountTest.ID, 1_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 2_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 3_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 4_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 5_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 6_000_00, "auto")
-	fmt.Println(newP)
+	_, err = s.Pay(accountTest.ID, 1_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 2_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 3_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 4_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 5_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 6_000_00, "auto")
+	//fmt.Println(newP)
 	//result := []types.Payment{} 
 	//payments, _ := s.FilterPayments(accountTest.ID,2)
 	want := 6
-	fmt.Printf("want %v", want)
+	//fmt.Printf("want %v", want)
 	for i := 0; i < b.N; i++ {
 		paymentsF, err := s.FilterPayments(accountTest.ID,2)
 		if err != nil {
