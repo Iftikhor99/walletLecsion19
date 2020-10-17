@@ -1131,8 +1131,13 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 						
 			allfoundPayments = append(allfoundPayments, newPayments...)
 			mu.Unlock()
-			
-
+			if (i == goroutines-1) && (len(allfoundPayments) != lenPay) {
+				
+				foundLen := len(allfoundPayments)
+				for j := foundLen; j < lenPay; j++ {
+				allfoundPayments = append(allfoundPayments, foundPayments[j])
+				}
+			} 
 		
 	}
 	}()
