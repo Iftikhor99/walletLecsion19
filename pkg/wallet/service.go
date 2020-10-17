@@ -1088,7 +1088,9 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 		log.Print(err)
 		return nil, ErrAccountNotFound
 	}
-
+	if goroutines <=1 {
+		return foundPayments, nil
+	}
 	
 	wg := sync.WaitGroup{}
 
@@ -1098,15 +1100,14 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 
 	lenPay := len(foundPayments)
 	numberOfPaymentPerRoutine := 0
-	if goroutines <=1 {
-		numberOfPaymentPerRoutine = lenPay
-	}else {
+	
 	numberOfPaymentPerRoutine = int(math.Ceil(float64((lenPay+1) / goroutines)))
-	}
+	
 	//numberOfPaymentPerRoutine := lenPay / goroutines
 	//timesOfPayments := 1
 	
 	index := 0
+	newNumberOfPaymentPerRoutine := numberOfPaymentPerRoutine 
 	go func() {
 	for i := 0; i < goroutines; i++ {
 		//lenPay := len(foundPayments)
@@ -1126,7 +1127,7 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 		//	fmt.Printf("newPayments %v", newPayments)
 				
 			mu.Lock()
-			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
+			numberOfPaymentPerRoutine += newNumberOfPaymentPerRoutine
 						
 			allfoundPayments = append(allfoundPayments, newPayments...)
 			mu.Unlock()
