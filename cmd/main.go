@@ -67,7 +67,7 @@ func main() {
 	fmt.Println(accountTest.Balance)
 	fmt.Println(newP)
 	fmt.Println(ee2)
-
+	//fmt.Println(svc.pay)
 	// newP2, ee3 := svc.FindPaymentByID(newP.ID)
 	// fmt.Println(newP2)
 	// fmt.Println(ee3)
