@@ -1055,8 +1055,9 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 				}
 			}
 			mu.Lock()
-			defer mu.Unlock()
 			sum += val // TOMbKO B KOHUE 3anvcbiBaeM CYMMY
+			mu.Unlock()
+			
 			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
 		}(index)
 	}
