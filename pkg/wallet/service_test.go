@@ -183,6 +183,18 @@ func TestService_PayFromFavorite_success(t *testing.T) {
 
 func BenchmarkSumPayments(b *testing.B) {
 	s := newTestService()
+	accountTest, err := s.RegisterAccount("+992000000001")
+	if err != nil {
+		b.Error(err)
+		return
+	}
+	newP, err := s.Pay(accountTest.ID, 1_000_00, "food")
+	newP, err = s.Pay(accountTest.ID, 2_000_00, "food")
+	newP, err = s.Pay(accountTest.ID, 3_000_00, "food")
+	newP, err = s.Pay(accountTest.ID, 4_000_00, "food")
+	newP, err = s.Pay(accountTest.ID, 5_000_00, "food")
+	newP, err = s.Pay(accountTest.ID, 6_000_00, "auto")
+	fmt.Println(newP)
 	want := types.Money(0)
 	for i := 0; i < b.N; i++ {
 		result := s.SumPayments(1)
