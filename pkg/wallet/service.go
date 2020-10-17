@@ -1083,7 +1083,7 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payment, error) {
 
 	var foundPayments []types.Payment
-	//	var newPayments []types.Payment
+	var newPayments []types.Payment
 	var allfoundPayments []types.Payment
 	for _, payment := range s.payments {
 		if payment.AccountID == accountID {
@@ -1107,10 +1107,10 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	index := 0
 	for i := 0; i < goroutines; i++ {
 		lenPay := len(foundPayments)
-		go func(i int, index int, numberOfPaymentPerRoutine int ) {
+		go func(i int, newPayments []types.Payment) {
 			
 			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
-			var newPayments []types.Payment
+			//var newPayments []types.Payment
 			for i:=0 ; index < numberOfPaymentPerRoutine; i++ {
 				if index < lenPay {
 					newPayments = append(newPayments, allPayments[index])
@@ -1126,7 +1126,7 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 			defer mu.Unlock()
 			
 
-		}(i, index, numberOfPaymentPerRoutine)
+		}(i, newPayments)
 	}
 	// go func() {
 	// 	defer wg.Done() // coo6waem, 4TO 3aKoH4UNN
