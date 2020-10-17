@@ -284,7 +284,7 @@ func (s *Service) ImportFromFile(path string) error {
 		}
 	}()
 
-	log.Printf("%#v", file)
+	//log.Printf("%#v", file)
 
 	content := make([]byte, 0)
 	buf := make([]byte, 4)
@@ -301,7 +301,7 @@ func (s *Service) ImportFromFile(path string) error {
 	//log.Print(data)
 	//log.Print(newData)
 
-	for ind1, stroka := range newData {
+	for _, stroka := range newData {
 		//log.Print(stroka)
 		account := &types.Account{}
 		newData2 := strings.Split(stroka, ";")
@@ -324,7 +324,7 @@ func (s *Service) ImportFromFile(path string) error {
 			}
 
 			// if (ind1 == 0) && (ind ==2) {
-			log.Print(ind1)
+		//	log.Print(ind1)
 			// 	s.accounts = append(s.accounts, account)
 			// }
 
@@ -345,11 +345,7 @@ func (s *Service) ImportFromFile(path string) error {
 		}
 		s.accounts = append(s.accounts, account)
 	}
-	for _, account := range s.accounts {
-		//	if account.Phone == phone {
-		log.Print(account)
-		//	}
-	}
+	
 
 	return nil
 
@@ -1111,9 +1107,9 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 		//lenPay := len(foundPayments)
 		
 		//	newPayments := []types.Payment{}
-			var newPayments []types.Payment
-			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
 			
+			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
+			var newPayments []types.Payment
 			for i:=0 ; index < numberOfPaymentPerRoutine; i++ {
 			//	payment := foundPayments[index]
 			//	if payment != nil  {
