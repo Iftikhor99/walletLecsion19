@@ -238,7 +238,7 @@ func BenchmarkFilterPayments(b *testing.B) {
 	want := 6
 	//fmt.Printf("want %v", want)
 	for i := 0; i < b.N; i++ {
-		paymentsF, err := s.FilterPayments(accountTest.ID,2)
+		paymentsF, err := s.FilterPayments(accountTest.ID,4)
 		if err != nil {
 			b.Error(err)
 			return
