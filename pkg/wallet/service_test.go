@@ -194,14 +194,14 @@ func BenchmarkSumPayments_Success(b *testing.B) {
 		fmt.Println("Аккаунт пользователя не найден")
 		//return
 	}
-	fmt.Println(accountTest.Balance)
-	newP, err := s.Pay(accountTest.ID, 1_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 2_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 3_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 4_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 5_000_00, "food")
-	newP, err = s.Pay(accountTest.ID, 6_000_00, "auto")
-	fmt.Println(newP)
+	//fmt.Println(accountTest.Balance)
+	_, err = s.Pay(accountTest.ID, 1_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 2_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 3_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 4_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 5_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 6_000_00, "auto")
+	//fmt.Println(newP)
 	result:= types.Money(0)
 	want := types.Money(2100000)
 	for i := 0; i < b.N; i++ {
