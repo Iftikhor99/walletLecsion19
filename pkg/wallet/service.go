@@ -1097,7 +1097,12 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	mu := sync.Mutex{}
 
 	lenPay := len(foundPayments)
-	numberOfPaymentPerRoutine := int(math.Ceil(float64((lenPay+1) / goroutines)))
+	numberOfPaymentPerRoutine := 0
+	if goroutines <=1 {
+		numberOfPaymentPerRoutine = lenPay
+	}else {
+	numberOfPaymentPerRoutine = int(math.Ceil(float64((lenPay+1) / goroutines)))
+	}
 	//numberOfPaymentPerRoutine := lenPay / goroutines
 	//timesOfPayments := 1
 	
