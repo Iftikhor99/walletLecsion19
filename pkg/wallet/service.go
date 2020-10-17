@@ -1006,8 +1006,8 @@ func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error)
 	var foundPayments []types.Payment
 
 	for _, payment := range s.payments {
-		log.Print(accountID)
-		log.Print(payment.AccountID)
+	//	log.Print(accountID)
+	//	log.Print(payment.AccountID)
 		if payment.AccountID == accountID {
 			foundPayments = append(foundPayments, *payment)
 			//	return foundPayments, nil
