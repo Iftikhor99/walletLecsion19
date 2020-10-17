@@ -1107,7 +1107,8 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	index := 0
 	for i := 0; i < goroutines; i++ {
 		lenPay := len(foundPayments)
-		go func() {
+		go func(i int) {
+			
 			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
 			var newPayments []types.Payment
 			for i:=0 ; index < numberOfPaymentPerRoutine; i++ {
@@ -1118,13 +1119,14 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 				index++
 			}
 		//	fmt.Printf("newPayments %v", newPayments)
-			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
+			
 			mu.Lock()
+			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
 			allfoundPayments = append(allfoundPayments, newPayments...)
 			defer mu.Unlock()
 			
 
-		}()
+		}(i)
 	}
 	// go func() {
 	// 	defer wg.Done() // coo6waem, 4TO 3aKoH4UNN
