@@ -1175,6 +1175,10 @@ func (s *Service) FilterPaymentsByFn(filter func(payment types.Payment) bool,	go
 		return nil, ErrAccountNotFound
 	}
 	
+	if goroutines <= 1 {
+		return foundPayments, nil
+	}
+
 	wg := sync.WaitGroup{}
 
 	wg.Add(goroutines) // cKonbKOo ropyTMH péM
