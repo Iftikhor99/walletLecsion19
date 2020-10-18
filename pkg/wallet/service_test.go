@@ -251,6 +251,44 @@ func BenchmarkFilterPayments(b *testing.B) {
 	//fmt.Printf("result %v", result)
 }
 
+func BenchmarkFilterPaymentsByFn(b *testing.B) {
+	s := newTestService()
+	accountTest, err := s.RegisterAccount("+992000000001")
+	if err != nil {
+		b.Error(err)
+		return
+	}
+	err = s.Deposit(accountTest.ID, 200_000_00)
+	if err != nil {
+		fmt.Println("Аккаунт пользователя не найден")
+		//return
+	}
+
+	_, err = s.Pay(accountTest.ID, 1_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 2_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 3_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 4_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 5_000_00, "food")
+	_, err = s.Pay(accountTest.ID, 6_000_00, "auto")
+	//fmt.Println(newP)
+	//result := []types.Payment{} 
+	//payments, _ := s.FilterPayments(accountTest.ID,2)
+	want := 6
+	//fmt.Printf("want %v", want)
+	for i := 0; i < b.N; i++ {
+		paymentsF, err := s.FilterPaymentsByFn(filter, 2)
+		if err != nil {
+			b.Error(err)
+			return
+		}
+		result := len(paymentsF)
+		if result != want {
+			b.Fatalf("invalid result, result %v, want %v", result, want)
+		}
+	}
+	//fmt.Printf("result %v", result)
+}
+
 func (s *testService) addAccount(data testAccount) (*types.Account, []*types.Payment, error) {
 	// perucTpupyemM TaM nonb30BaTena
 	account, err := s.RegisterAccount(data.phone)

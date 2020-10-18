@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"strings"
 
-//	"fmt"
+	//	"fmt"
 	"errors"
 
 	"github.com/Iftikhor99/wallet/v1/pkg/types"
@@ -324,7 +324,7 @@ func (s *Service) ImportFromFile(path string) error {
 			}
 
 			// if (ind1 == 0) && (ind ==2) {
-		//	log.Print(ind1)
+			//	log.Print(ind1)
 			// 	s.accounts = append(s.accounts, account)
 			// }
 
@@ -345,7 +345,6 @@ func (s *Service) ImportFromFile(path string) error {
 		}
 		s.accounts = append(s.accounts, account)
 	}
-	
 
 	return nil
 
@@ -1002,8 +1001,8 @@ func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error)
 	var foundPayments []types.Payment
 
 	for _, payment := range s.payments {
-	//	log.Print(accountID)
-	//	log.Print(payment.AccountID)
+		//	log.Print(accountID)
+		//	log.Print(payment.AccountID)
 		if payment.AccountID == accountID {
 			foundPayments = append(foundPayments, *payment)
 			//	return foundPayments, nil
@@ -1053,7 +1052,7 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 			mu.Lock()
 			sum += val // TOMbKO B KOHUE 3anvcbiBaeM CYMMY
 			mu.Unlock()
-			
+
 			numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
 		}(index)
 	}
@@ -1080,7 +1079,7 @@ func (s *Service) SumPayments(goroutines int) types.Money {
 func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payment, error) {
 
 	var foundPayments []types.Payment
-//	var newPayments []types.Payment
+	//	var newPayments []types.Payment
 	var allfoundPayments []types.Payment
 
 	foundPayments, err := s.ExportAccountHistory(accountID)
@@ -1088,10 +1087,10 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 		log.Print(err)
 		return nil, ErrAccountNotFound
 	}
-	if goroutines <=1 {
+	if goroutines <= 1 {
 		return foundPayments, nil
 	}
-	
+
 	wg := sync.WaitGroup{}
 
 	wg.Add(goroutines) // cKonbKOo ropyTMH péM
@@ -1100,46 +1099,46 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 
 	lenPay := len(foundPayments)
 	numberOfPaymentPerRoutine := 0
-	
-	numberOfPaymentPerRoutine = int(math.Ceil(float64((lenPay+1) / goroutines)))
-	
+
+	numberOfPaymentPerRoutine = int(math.Ceil(float64((lenPay + 1) / goroutines)))
+
 	//numberOfPaymentPerRoutine := lenPay / goroutines
 	//timesOfPayments := 1
-	
+
 	index := 0
-	newNumberOfPaymentPerRoutine := numberOfPaymentPerRoutine 
+	newNumberOfPaymentPerRoutine := numberOfPaymentPerRoutine
 	go func() {
-	for i := 0; i < goroutines; i++ {
-		//lenPay := len(foundPayments)
-		
-		//	newPayments := []types.Payment{}
-			
+		for i := 0; i < goroutines; i++ {
+			//lenPay := len(foundPayments)
+
+			//	newPayments := []types.Payment{}
+
 			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
 			var newPayments []types.Payment
-			for i:=0 ; index < numberOfPaymentPerRoutine; i++ {
-			//	payment := foundPayments[index]
-			//	if payment != nil  {
-					newPayments = append(newPayments, foundPayments[index])
+			for i := 0; index < numberOfPaymentPerRoutine; i++ {
+				//	payment := foundPayments[index]
+				//	if payment != nil  {
+				newPayments = append(newPayments, foundPayments[index])
 				//	fmt.Printf("newPayments %v", newPayments)
-			//	}
+				//	}
 				index++
 			}
-		//	fmt.Printf("newPayments %v", newPayments)
-				
+			//	fmt.Printf("newPayments %v", newPayments)
+
 			mu.Lock()
 			numberOfPaymentPerRoutine += newNumberOfPaymentPerRoutine
-						
+
 			allfoundPayments = append(allfoundPayments, newPayments...)
 			mu.Unlock()
 			if (i == goroutines-1) && (len(allfoundPayments) != lenPay) {
-				
+
 				foundLen := len(allfoundPayments)
 				for j := foundLen; j < lenPay; j++ {
-				allfoundPayments = append(allfoundPayments, foundPayments[j])
+					allfoundPayments = append(allfoundPayments, foundPayments[j])
 				}
-			} 
-		
-	}
+			}
+
+		}
 	}()
 	// go func() {
 	// 	defer wg.Done() // coo6waem, 4TO 3aKoH4UNN
@@ -1160,41 +1159,96 @@ func (s *Service) FilterPayments(accountID int64, goroutines int) ([]types.Payme
 	return allfoundPayments, nil
 }
 
-// //FilterPaymentsNormal for
-// func (s *Service) FilterPaymentsNormal(accountID int64, goroutines int) ([]types.Payment, error) {
+//FilterPaymentsByFn for
+func (s *Service) FilterPaymentsByFn(filter func(payment types.Payment) bool,	goroutines int) ([]types.Payment, error) {
+	var foundPayments []types.Payment
+	//	var newPayments []types.Payment
+	var allfoundPayments []types.Payment
+	for _, payment := range s.payments {
+				
+		if filter(*payment) == true {
+			foundPayments = append(foundPayments, *payment)
+			//	return foundPayments, nil
+		}
+	}
+	if foundPayments == nil {
+		return nil, ErrAccountNotFound
+	}
+	
+	wg := sync.WaitGroup{}
 
-// 	var foundPayments []types.Payment
+	wg.Add(goroutines) // cKonbKOo ropyTMH péM
 
-// 	var allfoundPayments []types.Payment
-// 	for _, payment := range s.payments {
-// 		if payment.AccountID == accountID {
-// 			foundPayments = append(foundPayments, *payment)
-// 		}
-// 	}
-// 	if foundPayments == nil {
-// 		return nil, ErrAccountNotFound
-// 	}
+	mu := sync.Mutex{}
 
-// 	lenPay := len(foundPayments)
-// 	numberOfPaymentPerRoutine := int(math.Ceil(float64((lenPay + 1) / goroutines)))
-// 	//numberOfPaymentPerRoutine := lenPay / goroutines
-// 	//timesOfPayments := 1
-// 	allPayments := foundPayments
-// 	index := 0
-// 	for i := 0; i < goroutines; i++ {
-// 		newPayments := []types.Payment{}
+	lenPay := len(foundPayments)
+	numberOfPaymentPerRoutine := 0
 
-// 		for ; index < numberOfPaymentPerRoutine; index++ {
-// 			if index < lenPay {
-// 				newPayments = append(newPayments, allPayments[index])
+	numberOfPaymentPerRoutine = int(math.Ceil(float64((lenPay + 1) / goroutines)))
 
-// 			}
-// 		}
-// 		numberOfPaymentPerRoutine += numberOfPaymentPerRoutine
+	//numberOfPaymentPerRoutine := lenPay / goroutines
+	//timesOfPayments := 1
 
-// 		allfoundPayments = append(allfoundPayments, newPayments...)
+	index := 0
+	newNumberOfPaymentPerRoutine := numberOfPaymentPerRoutine
 
-// 	}
+	
+	go func() {
+		for i := 0; i < goroutines; i++ {
+			lenPay := len(foundPayments)
 
-// 	return allfoundPayments, nil
-// }
+			//	newPayments := []types.Payment{}
+
+			defer wg.Done() // cooOwaem, 4TO 3aKkoHUunN
+			var newPayments []types.Payment
+
+			for i := 0; index < numberOfPaymentPerRoutine; i++ {
+				//	payment := foundPayments[index]
+				//	if payment != nil  {
+				newPayments = append(newPayments, foundPayments[index])
+				//	fmt.Printf("newPayments %v", newPayments)
+				//	}
+				index++
+			}
+				
+						
+			mu.Lock()
+			numberOfPaymentPerRoutine += newNumberOfPaymentPerRoutine
+
+			allfoundPayments = append(allfoundPayments, newPayments...)
+			mu.Unlock()
+			if (i == goroutines-1) && (len(allfoundPayments) != lenPay) {
+
+				foundLen := len(allfoundPayments)
+				for j := foundLen; j < lenPay; j++ {
+					allfoundPayments = append(allfoundPayments, foundPayments[j])
+				}
+			}
+
+		}
+	}()
+	// go func() {
+	// 	defer wg.Done() // coo6waem, 4TO 3aKoH4UNN
+	// 	val := types.Money(0)
+	// 	for index, payment := range s.payments {
+	// 		if index > numberOfPaymentPerRoutine{
+	// 			break
+	// 		}
+	// 		val += payment.Amount
+	// 	}
+	// 	mu.Lock()
+	// 	defer mu.Unlock()
+	// 	sum += val // TOMbKO B KOHWE 3anucbiBaeM CyMMy
+
+	// }()
+
+	wg.Wait()
+	return allfoundPayments, nil
+}
+
+func filter(payment types.Payment) bool {
+	if payment.AccountID == 1 {
+		return true
+	}
+	return false
+}
