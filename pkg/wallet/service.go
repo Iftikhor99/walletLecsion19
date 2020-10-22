@@ -1595,7 +1595,18 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 
 	
 	lenPay := len(foundPayments)
-
+	if lenPay == 0 {
+		ch := make(chan Progress)
+		defer close(ch)
+		
+	
+		go func(){
+			sum := Progress{} 
+						
+			ch<- sum
+			}()
+		return ch
+	}
 	
 	//parts := 5
 	size := lenPay/goroutines
