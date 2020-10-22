@@ -47,6 +47,12 @@ type Service struct {
 	favorites     []*types.Favorite
 }
 
+//Progress for
+type Progress struct {
+	Part int
+	Result types.Money
+}
+
 //RegisterAccount for
 func (s *Service) RegisterAccount(phone types.Phone) (*types.Account, error) {
 	for _, account := range s.accounts {
@@ -300,7 +306,7 @@ func (s *Service) ImportFromFile(path string) error {
 	newData := strings.Split(data, "|")
 	//log.Print(data)
 	//log.Print(newData)
-
+	
 	for _, stroka := range newData {
 		//log.Print(stroka)
 		account := &types.Account{}
@@ -1014,6 +1020,24 @@ func (s *Service) ExportAccountHistory(accountID int64) ([]types.Payment, error)
 	return foundPayments, nil
 }
 
+//ExportAccountHistoryWithoutID for
+func (s *Service) ExportAccountHistoryWithoutID() ([]types.Payment, error) {
+	var foundPayments []types.Payment
+
+	for _, payment := range s.payments {
+		//	log.Print(accountID)
+		//	log.Print(payment.AccountID)
+		//if payment.AccountID == accountID {
+			foundPayments = append(foundPayments, *payment)
+			//	return foundPayments, nil
+		//}
+	}
+	if foundPayments == nil {
+		return nil, ErrAccountNotFound
+	}
+	return foundPayments, nil
+}
+
 // //Simple for
 // func (s *Service) Simple() types.Money {
 // 	lenPay := len(s.payments)
@@ -1255,4 +1279,372 @@ func filter(payment types.Payment) bool {
 		return true
 	}
 	return false
+}
+
+// //SumPaymentsWithProgress for
+// func (s *Service) SumPaymentsWithProgress() <-chan Progress {
+
+// 	var newP *types.Payment
+// 	accountTest1, _ := s.RegisterAccount("+992000000001")
+// 	_ = s.Deposit(accountTest1.ID, 100_000_00)
+	
+// 	data := make([]int, 10)
+// 	for i :=0; i < len(data); i++ {
+// 		newP, _ = s.Pay(1, types.Money(i), "food")
+		
+// 		data[i] = i
+// 	}
+// 	log.Print(newP)
+// 	ch := make(chan Progress)
+// 	defer close(ch)
+// 	parts := 2
+// 	size := len(data)/parts
+	
+// 	for i := 0; i < parts; i++ {
+// 		go func(ch chan <- Progress, data []int){
+// 			sum := Progress{} 
+// 			for index:=0; index < len(data); index++{
+// 				sum.Part = index
+// 				sum.Result += s.payments[index].Amount
+				
+// 			}
+// 			ch<- sum
+// 		}(ch, data[i*size:(i+1)*size])
+		
+// 	}
+
+// 	total := make(chan Progress)
+		
+// 	for value := range ch{
+// 		total <- value
+// 	}
+// 	log.Print(total)
+// 	return total
+// }
+
+
+// //SumPaymentsWithProgress for
+// func (s *Service) SumPaymentsWithProgress() <-chan int {
+
+// 	//var newP *types.Payment
+// 	accountTest1, _ := s.RegisterAccount("+992000000001")
+// 	_ = s.Deposit(accountTest1.ID, 100_000_00)
+	
+// 	data := make([]int, 10)
+// 	for i :=0; i < len(data); i++ {
+// 	//	newP, _ = s.Pay(1, types.Money(i), "food")
+		
+// 		data[i] = i
+// 	}
+// 	//log.Print(newP)
+	
+// 	payments := make([]*types.Payment, len(data))
+// 	for i := range data {
+// 		// Torga 30€Ccb padoTaem npocto yepes index, a He Yepe3 append
+// 		payments[i], _ = s.Pay(accountTest1.ID, types.Money(i),"auto")
+		
+// 	}
+
+// 	parts := 10
+// 	size := len(data)/parts
+// 	channels := make([]<-chan int, parts)
+	
+// 	for i := 0; i < parts; i++ {
+// 		ch := make(chan int)
+// 		channels[i] = ch
+// 		go func(ch chan<- int, data []int){
+// 			defer close(ch)
+// 			sum := Progress{} 
+// 			for _, index := range data{
+// 				sum.Part = index
+// 				sum.Result += s.payments[index].Amount
+				
+// 			}
+// 			ch<- int(sum.Result)
+// 		}(ch, data[i*size:(i+1)*size])
+		
+// 	}
+
+// 	total := make(chan int,20)
+// 	for value := range merge(channels) {
+// 		total <- value
+// 	}
+// 	log.Print(total)
+// 	return total
+// }
+
+// func merge(chanells []<- chan Progress) <- chan Progress {
+// 	wg := sync.WaitGroup{}
+// 	wg.Add(len(chanells))
+// 	merged := make(chan Progress)
+	
+// 	for _, ch := range chanells {
+// 		go func(ch <- chan Progress){
+// 			defer wg.Done()
+// 			for val := range ch {
+// 				merged <- val
+// 			}
+// 		}(ch)
+// 	}
+
+// 	go func() {
+// 		defer close(merged)
+// 		wg.Wait()
+// 	}()
+// 	return merged
+// }
+
+// //SumPaymentsWithProgress for
+// func (s *Service) SumPaymentsWithProgress() int {
+
+	
+// 	data := make([]int, 10)
+// 	for i := range data {
+				
+// 		data[i] = i
+// 	}
+	
+	
+// 	parts := 10
+// 	size := len(data)/parts
+// 	channels := make([]<-chan int, parts)
+	
+// 	for i := 0; i < parts; i++ {
+// 		ch := make(chan int)
+// 		channels[i] = ch
+// 		go func(ch chan<- int, data []int){
+// 			defer close(ch)
+// 			sum := 0 
+// 			for _, index := range data{
+// 				sum += index
+				
+// 			}
+// 			ch<- sum
+// 		}(ch, data[i*size:(i+1)*size])
+		
+// 	}
+
+// 	total := 0
+// 	for value := range merge(channels) {
+// 		total += value
+// 	}
+// 	//log.Print(total)
+// 	return total
+// }
+
+// func merge(chanells []<- chan int) <- chan int {
+// 	wg := sync.WaitGroup{}
+// 	wg.Add(len(chanells))
+// 	merged := make(chan int)
+	
+// 	for _, ch := range chanells {
+// 		go func(ch <- chan int){
+// 			defer wg.Done()
+// 			for val := range ch {
+// 				merged <- val
+// 			}
+// 		}(ch)
+// 	}
+
+// 	go func() {
+// 		defer close(merged)
+// 		wg.Wait()
+// 	}()
+// 	return merged
+// }
+
+// //FilterPaymentsNew for
+// func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Payment, error) {
+
+// 	var foundPayments []types.Payment
+// 	//	var newPayments []types.Payment
+// 	var allfoundPayments []types.Payment
+
+// 	foundPayments, err := s.ExportAccountHistory(accountID)
+// 	if err != nil {
+// 		log.Print(err)
+// 		return nil, ErrAccountNotFound
+// 	}
+// 	if goroutines <= 1 {
+// 		return foundPayments, nil
+// 	}
+
+// 	wg := sync.WaitGroup{}
+
+// 	wg.Add(goroutines) // cKonbKOo ropyTMH péM
+
+// 	mu := sync.Mutex{}
+
+// 	lenPay := len(foundPayments)
+
+// 	// numberOfPaymentPerRoutine := 0
+
+// 	// numberOfPaymentPerRoutine = int(math.Ceil(float64((lenPay + 1) / goroutines)))
+
+// 	//parts := 5
+// 	size := lenPay/goroutines
+// 	var newPayments []types.Payment
+	
+// 	i := 0
+// 	go func(foundPayments []types.Payment){
+		
+// 		for i := 0; i < goroutines; i++ {	
+// 			defer wg.Done()
+		 
+// 			for _, v := range foundPayments{
+// 				newPayments = append(newPayments, v)
+// 			}
+			
+// 			mu.Lock()
+// 			allfoundPayments = append(allfoundPayments, newPayments...)
+// 			mu.Unlock()
+// 		}
+		
+// 	}(foundPayments[i*size:(i+1)*size])
+	
+// 	//numberOfPaymentPerRoutine := lenPay / goroutines
+// 	//timesOfPayments := 1
+
+		
+// 	wg.Wait()
+// 	return allfoundPayments, nil
+// }
+
+//FilterPaymentsNew for
+func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Payment, error) {
+
+	var foundPayments []types.Payment
+	//	var newPayments []types.Payment
+	var allfoundPayments []types.Payment
+	
+
+	foundPayments, err := s.ExportAccountHistory(accountID)
+	if err != nil {
+		log.Print(err)
+		
+	}
+	if goroutines <= 1 {
+		return foundPayments, nil
+	}
+
+	wg := sync.WaitGroup{}
+
+	wg.Add(goroutines) // cKonbKOo ropyTMH péM
+
+	mu := sync.Mutex{}
+
+	
+	lenPay := len(foundPayments)
+
+	
+	//parts := 5
+	size := lenPay/goroutines
+	i:= 0
+	go func(foundPayments []types.Payment){
+	 
+	
+		
+		for i := 0; i < goroutines; i++ {	
+			defer wg.Done()
+			var newPayments []types.Payment
+			data := foundPayments[i*size:(i+1)*size]			 
+			for _, v := range data{
+				newPayments = append(newPayments, v)
+			}
+			
+			mu.Lock()
+			allfoundPayments = append(allfoundPayments, newPayments...)
+ 			mu.Unlock()
+			
+			
+		}
+	}(foundPayments[i*size:(i+1)*size])	
+//	
+	
+	//numberOfPaymentPerRoutine := lenPay / goroutines
+	//timesOfPayments := 1
+
+		
+	wg.Wait()
+	return allfoundPayments, nil
+}
+
+//SumPaymentsWithProgress for
+func (s *Service) SumPaymentsWithProgress() <-chan Progress {
+
+	var foundPayments []types.Payment
+	//	var newPayments []types.Payment
+	//var allfoundPayments []types.Payment
+	
+
+	foundPayments, err := s.ExportAccountHistoryWithoutID()
+	if err != nil {
+		log.Print(err)
+		
+	}
+	// if goroutines <= 1 {
+	// 	return types.Money(0), nil
+	// }
+	goroutines := 100000
+
+	wg := sync.WaitGroup{}
+
+	wg.Add(goroutines) // cKonbKOo ropyTMH péM
+
+	mu := sync.Mutex{}
+
+	
+	lenPay := len(foundPayments)
+
+	
+	//parts := 5
+	size := lenPay/goroutines
+	i:= 0
+	total := types.Money(0)
+	go func(foundPayments []types.Payment){
+	 
+	
+		
+		for i := 0; i < goroutines; i++ {	
+			defer wg.Done()
+			sum := types.Money(0)
+			
+			data := foundPayments[i*size:(i+1)*size]			 
+			for _, v := range data{
+				sum += v.Amount
+				
+			}	
+			
+			mu.Lock()
+			total += sum
+ 			mu.Unlock()
+			
+			
+		}
+	}(foundPayments[i*size:(i+1)*size])	
+//	
+	wg.Wait()
+	//numberOfPaymentPerRoutine := lenPay / goroutines
+	//timesOfPayments := 1
+
+	ch := make(chan Progress)
+	defer close(ch)
+		
+	
+		go func(){
+			sum := Progress{} 
+			
+				sum.Part = 1
+				sum.Result = total
+				
+			
+			ch<- sum
+		}()
+		
+	
+
+	
+	log.Print(total)
+	return ch
+		
 }
