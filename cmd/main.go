@@ -4,7 +4,7 @@ import (
 	"sync"
 	//	"io/ioutil"
 	"path/filepath"
-	//	"github.com/Iftikhor99/wallet/v1/pkg/types"
+//	"github.com/Iftikhor99/wallet/v1/pkg/types"
 	//	"strings"
 	//	"strconv"
 	//	"io"
@@ -35,9 +35,9 @@ func main() {
 	}
 	fmt.Println(accountTest1.Balance)
 
-	newP1, ee21 := svc.Pay(accountTest1.ID, 6_000_00, "car")
-	fmt.Println(newP1)
-	fmt.Println(ee21)
+	// newP1, ee21 := svc.Pay(accountTest1.ID, 6_000_00, "car")
+	// fmt.Println(newP1)
+	// fmt.Println(ee21)
 
 	accountTest, err := svc.RegisterAccount("+992000000002")
 	if err != nil {
@@ -57,16 +57,23 @@ func main() {
 	}
 	fmt.Println(accountTest.Balance)
 
-	newP, ee2 := svc.Pay(accountTest.ID, 1_000_00, "food")
-	newP, ee2 = svc.Pay(accountTest.ID, 2_000_00, "food")
-	newP, ee2 = svc.Pay(accountTest.ID, 3_000_00, "food")
-	newP, ee2 = svc.Pay(accountTest.ID, 4_000_00, "food")
-	newP, ee2 = svc.Pay(accountTest.ID, 5_000_00, "food")
-	newP, ee2 = svc.Pay(accountTest.ID, 6_000_00, "auto")
+	// data := make([]int, 10)
+	// var newP *types.Payment
+	// for i := range data {
+	// 	newP, err = svc.Pay(accountTest.ID, types.Money(i), "food")
+	// 	data[i] = i
+	// }
+
+	// newP, ee2 := svc.Pay(accountTest.ID, 1_000_00, "food")
+	// newP, ee2 = svc.Pay(accountTest.ID, 2_000_00, "food")
+	// newP, ee2 = svc.Pay(accountTest.ID, 3_000_00, "food")
+	// newP, ee2 = svc.Pay(accountTest.ID, 4_000_00, "food")
+	// newP, ee2 = svc.Pay(accountTest.ID, 5_000_00, "food")
+	// newP, ee2 = svc.Pay(accountTest.ID, 6_000_00, "auto")
 
 	fmt.Println(accountTest.Balance)
-	fmt.Println(newP)
-	fmt.Println(ee2)
+//	fmt.Println(newP)
+	//fmt.Println(ee2)
 	//fmt.Println(svc.pay)
 	// newP2, ee3 := svc.FindPaymentByID(newP.ID)
 	// fmt.Println(newP2)
@@ -147,6 +154,33 @@ func main() {
 	log.Print(pay)
 	log.Print(err8)
 	log.Print(len(pay))
+
+	
+	//println(data[500])
+	
+	// ch := make(chan int)
+	// defer close(ch)
+	// parts := 5
+	// size := len(data)/parts
+	
+	// for i := 0; i < parts; i++ {
+	// 	go func(ch chan<- int, data []int){
+	// 		sum := 0 
+	// 		for _, v := range data{
+	// 			sum += v
+	// 		}
+	// 		ch<- sum
+	// 	}(ch, data[i*size:(i+1)*size])
+		
+	// }
+
+	// total := 0
+	// for i := 0; i < parts; i++{
+	// 	total += <- ch
+	// }
+	// log.Print(total)
+
+	svc.SumPaymentsWithProgress()
 
 }
 
