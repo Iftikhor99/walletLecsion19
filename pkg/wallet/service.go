@@ -1576,10 +1576,18 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	//	var newPayments []types.Payment
 	//var allfoundPayments []types.Payment
 	
+	ch := make(chan Progress)
+	defer close(ch)
 
 	foundPayments, err := s.ExportAccountHistoryWithoutID()
 	if err != nil {
 		log.Print(err)
+		go func(){
+			sum := Progress{} 
+						
+			ch<- sum
+			}()
+		return ch
 		
 	}
 	// if goroutines <= 1 {
@@ -1592,14 +1600,11 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	wg.Add(goroutines) // cKonbKOo ropyTMH péM
 
 	mu := sync.Mutex{}
-
+		
 	
 	lenPay := len(foundPayments)
 	if lenPay == 0 {
-		ch := make(chan Progress)
-		defer close(ch)
-		
-	
+			
 		go func(){
 			sum := Progress{} 
 						
@@ -1638,9 +1643,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	//numberOfPaymentPerRoutine := lenPay / goroutines
 	//timesOfPayments := 1
 
-	ch := make(chan Progress)
-	defer close(ch)
-		
+	
 	
 		go func(){
 			sum := Progress{} 
