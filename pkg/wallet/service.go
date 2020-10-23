@@ -1768,7 +1768,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 		total.Part += value.Part
 		total.Result += value.Result
 	}
-	log.Print(total)
+//	log.Print(total)
 	
 
 	newCh := make(chan Progress)
