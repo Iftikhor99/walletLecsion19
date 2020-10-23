@@ -1672,7 +1672,7 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 
 	foundPayments, _ := s.ExportAccountHistoryWithoutID()
-	parts := 10
+	parts := 5
 
 	 size := len(foundPayments) / parts
 	if size < 1 {
