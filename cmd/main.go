@@ -4,7 +4,7 @@ import (
 	"sync"
 	//	"io/ioutil"
 	"path/filepath"
-//	"github.com/Iftikhor99/wallet/v1/pkg/types"
+	"github.com/Iftikhor99/wallet/v1/pkg/types"
 	//	"strings"
 	//	"strconv"
 	//	"io"
@@ -14,6 +14,12 @@ import (
 
 	"github.com/Iftikhor99/wallet/v1/pkg/wallet"
 )
+
+//Progress for
+type Progress struct {
+	Part int
+	Result types.Money
+}
 
 func main() {
 	svc := &wallet.Service{}
@@ -155,37 +161,103 @@ func main() {
 	// log.Print(err8)
 	// log.Print(len(pay))
 
-	done := make(chan struct{},1)
-	log.Print(len(done))
-	done <- struct{}{}
-	<- done
-	log.Print("done")	
+	// done := make(chan struct{},1)
+	// log.Print(len(done))
+	// done <- struct{}{}
+	// <- done
+	// log.Print("done")	
 	//println(data[500])
+	//data := make([]int, 1_00)
+	// for i:= range data {
+	// 	data[i] =i
+	// }
 	
-	// ch := make(chan int)
-	// defer close(ch)
-	// parts := 5
-	// size := len(data)/parts
-	
-	// for i := 0; i < parts; i++ {
-	// 	go func(ch chan<- int, data []int){
-	// 		sum := 0 
-	// 		for _, v := range data{
-	// 			sum += v
-	// 		}
-	// 		ch<- sum
-	// 	}(ch, data[i*size:(i+1)*size])
+	for i := 1; i< 101; i++ {
+		_, _ = svc.Pay(1, types.Money(i), "food")
+						
+ 	}
+	foundPayments, _ := svc.ExportAccountHistoryWithoutID()
+	parts := 10
+
+	size := len(foundPayments)/parts
+	channels := make([]<-chan Progress, parts) 
+	for i := 0; i < parts; i++ {
+		ch := make(chan Progress)
+		channels[i] = ch
+		go func(ch chan<- Progress, foundPayments []types.Payment){
+			defer close(ch)
+			sum := Progress{}
+			for j, v := range foundPayments{
+				sum.Part += j
+				sum.Result += v.Amount
+			}
+			ch<- sum
+		}(ch, foundPayments[i*size:(i+1)*size])
 		
-	// }
+	}
 
-	// total := 0
-	// for i := 0; i < parts; i++{
-	// 	total += <- ch
-	// }
-	// log.Print(total)
-
+	total := Progress{}
+	for value := range 	merge(channels) {
+		total.Part += value.Part
+		total.Result += value.Result
+	}
+	log.Print(total)
+	// total := payProces()
+	// log.Print(total)	
 	// svc.SumPaymentsWithProgress()
 
+}
+
+// func payProces() Progress {
+// 	svc := &wallet.Service{}
+// 	foundPayments, _ := svc.ExportAccountHistoryWithoutID()
+// 	parts := 10
+
+// 	size := len(foundPayments)/parts
+// 	channels := make([]<-chan Progress, parts) 
+// 	for i := 0; i < parts; i++ {
+// 		ch := make(chan Progress)
+// 		channels[i] = ch
+// 		go func(ch chan<- Progress, foundPayments []types.Payment){
+// 			defer close(ch)
+// 			sum := Progress{}
+// 			for j, v := range foundPayments{
+// 				sum.Part += j
+// 				sum.Result += v.Amount
+// 			}
+// 			ch<- sum
+// 		}(ch, foundPayments[i*size:(i+1)*size])
+		
+// 	}
+
+// 	total := Progress{}
+// 	for value := range 	merge(channels) {
+// 		total.Part += value.Part
+// 		total.Result += value.Result
+// 	}
+// 	log.Print(total)
+// 	return total
+// }
+
+func merge(channels []<-chan Progress) <-chan Progress {
+	wg := sync.WaitGroup{}
+	wg.Add(len(channels))
+	merged := make(chan Progress)
+
+	for _, ch := range channels {
+		go func(ch <- chan Progress) {
+			defer wg.Done()
+			for val := range ch {
+				merged <- val
+			}
+		}(ch)
+	}
+
+	go func() {
+		defer close(merged)
+		wg.Wait()
+	}()
+	return merged
 }
 
 //Concurrently for
