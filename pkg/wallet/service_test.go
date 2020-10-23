@@ -533,7 +533,7 @@ func TestService_Import_Success(t *testing.T) {
 // 	//fmt.Printf("result %v", result)
 // }
 
-// func BenchmarkFilterPaymentsNew2(b *testing.B) {
+// func BenchmarkSumPaymentsWithProgress(b *testing.B) {
 // 	s := newTestService()
 	
 // 	//fmt.Println(newP)
@@ -551,17 +551,21 @@ func TestService_Import_Success(t *testing.T) {
 // 		//return
 // 	}
 // 	//data := make([]int, 10_000_001)
-// 	for j := 1; j < 10; j++ {
-// 		_, _ = s.Pay(1, types.Money(j), "food")
+// 	// for j := 1; j < 10; j++ {
+// 	// 	_, _ = s.Pay(1, types.Money(j), "food")
 				
-// 	}
-		
-// 	want := Progress{} 
-// 	want.Part = 1
-// 	want.Result = types.Money(45)
+// 	// }
+// 	ch := make(chan Progress,1)
+// 	defer close(ch)	
+// 	sum := Progress{} 
+						
+// 	ch<- sum
+// 	<- ch
+// 	want := ch 
+	
 // 	//fmt.Printf("want %v", want)
 // 	for i := 0; i < b.N; i++ {
-// 		paymentsF := s.FilterPaymentsNew2()
+// 		paymentsF := s.SumPaymentsWithProgress()
 // 	//	fmt.Print(paymentsF)
 		
 // 		result := paymentsF

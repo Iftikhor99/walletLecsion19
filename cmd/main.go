@@ -150,12 +150,16 @@ func main() {
 	// 	return
 	// }
 	//svc.Simple()
-	pay, err8 := svc.FilterPayments(2,4) 
-	log.Print(pay)
-	log.Print(err8)
-	log.Print(len(pay))
+	// pay, err8 := svc.FilterPayments(2,4) 
+	// log.Print(pay)
+	// log.Print(err8)
+	// log.Print(len(pay))
 
-	
+	done := make(chan struct{},1)
+	log.Print(len(done))
+	done <- struct{}{}
+	<- done
+	log.Print("done")	
 	//println(data[500])
 	
 	// ch := make(chan int)
@@ -180,7 +184,7 @@ func main() {
 	// }
 	// log.Print(total)
 
-	svc.SumPaymentsWithProgress()
+	// svc.SumPaymentsWithProgress()
 
 }
 
