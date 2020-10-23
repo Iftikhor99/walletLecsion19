@@ -569,7 +569,7 @@ func TestService_Import_Success(t *testing.T) {
 // 		// for j := range paymentsF {
 // 		// 	log.Print(j)
 // 		// }
-// 		resultChanel := <- paymentsF
+// 		resultChanel := paymentsF
 // 		//defer close(paymentsF)
 // 		log.Printf("resultChanel %v", resultChanel)
 // 		result := resultChanel
