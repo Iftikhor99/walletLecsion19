@@ -1597,7 +1597,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	// if goroutines <= 1 {
 	// 	return types.Money(0), nil
 	// }
-	goroutines := 10
+	goroutines := 5
 	// if goroutines <= 1 {
 	// 	sum := Progress{} 
 						
@@ -1628,8 +1628,17 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	
 	parts := 100_000
 	size := lenPay/parts
+	if size < goroutines {
+		
+		goroutines = size
+	}
 	i:= 0
 	total := types.Money(0)
+
+	if size == 0 {
+		size = lenPay
+		goroutines = 1
+	}
 	go func(foundPayments []types.Payment){
 	 
 		
