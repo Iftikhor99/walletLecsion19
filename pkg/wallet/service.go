@@ -1692,8 +1692,9 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 			
 	}
 	//log.Print(len(foundPaymentsParts))
-
+	parts = len(foundPaymentsParts)
 	channels := make([]<-chan Progress, parts)
+
 	for i, payment := range foundPaymentsParts {
 		
 		
