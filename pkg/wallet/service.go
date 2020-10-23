@@ -1577,7 +1577,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	//var allfoundPayments []types.Payment
 	
 	ch := make(chan Progress,1)
-	defer close(ch)
+	
 	partSum := Progress{}
 
 	foundPayments, err := s.ExportAccountHistoryWithoutID()
@@ -1662,19 +1662,22 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 			
 			
 		}
+		
 	}(foundPayments[i*size:(i+1)*size])	
 //	
+go func(){
+	defer close(ch)
 	wg.Wait()
 	//numberOfPaymentPerRoutine := lenPay / goroutines
 	//timesOfPayments := 1
-
+}()
 	
 	
 	
 	log.Print(total)
-	ch<- partSum
-	val :=<- ch
-	log.Print(val)
+	// ch<- partSum
+	// val :=<- ch
+	// log.Print(val)
 	return ch
 		
 }
