@@ -216,7 +216,7 @@ func payProces() Progress {
 		
 	}
 
-	err1 = svc.Deposit(accountTest1.ID, 100_000_00)
+	err1 = svc.Deposit(accountTest1.ID, 1_000_000_000_000)
 	if err1 != nil {
 		switch err1 {
 		case wallet.ErrAmountMustBePositive:
@@ -229,12 +229,12 @@ func payProces() Progress {
 	fmt.Println(accountTest1.Balance)
 
 
-	for i := 1; i< 101; i++ {
+	for i := 1; i< 1_000_001; i++ {
 		_, _ = svc.Pay(1, types.Money(i), "food")
 						
  	}
 	foundPayments, _ := svc.ExportAccountHistoryWithoutID()
-	parts := 10
+	parts := 100_000
 
 	size := len(foundPayments)/parts
 	channels := make([]<-chan Progress, parts) 
