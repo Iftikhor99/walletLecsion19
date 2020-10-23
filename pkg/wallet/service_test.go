@@ -1,7 +1,7 @@
 package wallet
 
 import (
-//	"log"
+	"log"
 	"os"
 	"fmt"
 	"reflect"
@@ -192,7 +192,7 @@ func BenchmarkSumPayments_Success(b *testing.B) {
 	}
 	err = s.Deposit(accountTest.ID, 200_000_00)
 	if err != nil {
-		fmt.Println("Аккаунт пользователя не найден")
+		log.Print("Аккаунт пользователя не найден")
 		//return
 	}
 	//fmt.Println(accountTest.Balance)
@@ -534,47 +534,47 @@ func TestService_Import_Success(t *testing.T) {
 // 	//fmt.Printf("result %v", result)
 // }
 
-// func BenchmarkSumPaymentsWithProgress(b *testing.B) {
-// 	s := newTestService()
+func BenchmarkSumPaymentsWithProgress(b *testing.B) {
+	s := newTestService()
 	
-// 	//fmt.Println(newP)
-// 	//result := []types.Payment{} 
-// 	//payments, _ := s.FilterPayments(accountTest.ID,2)
+	//fmt.Println(newP)
+	//result := []types.Payment{} 
+	//payments, _ := s.FilterPayments(accountTest.ID,2)
 
-// 	accountTest, err := s.RegisterAccount("+992000000001")
-// 	if err != nil {
-// 		fmt.Print(err)
+	accountTest, err := s.RegisterAccount("+992000000001")
+	if err != nil {
+		fmt.Print(err)
 		
-// 	}
-// 	err = s.Deposit(accountTest.ID, 2_000_000_000_000_000)
-// 	if err != nil {
-// 		fmt.Println("Аккаунт пользователя не найден")
-// 		//return
-// 	}
-// 	data := make([]int, 10_000_001)
-// 	// for j := 1; j < 10_000_001; j++ {
-// 	// 	_, _ = s.Pay(1, types.Money(j), "food")
+	}
+	err = s.Deposit(accountTest.ID, 2_000_000_000_000_000)
+	if err != nil {
+		fmt.Println("Аккаунт пользователя не найден")
+		//return
+	}
+	data := make([]int, 10_000_001)
+	for j := 1; j < 10_000_001; j++ {
+		_, _ = s.Pay(1, types.Money(j), "food")
 				
-// 	// }
-// 	log.Print(len(data))
+	}
+	log.Print(len(data))
 	
-// 	want := types.Money(5050) 
-// 	//chanel := make(chan Progress, 1)
-// 	//fmt.Printf("want %v", want)
-// 	for i := 0; i < b.N; i++ {
-// 		paymentsF := s.SumPaymentsWithProgress()
-// 	//	fmt.Print(paymentsF)
+	want := types.Money(5050) 
+	//chanel := make(chan Progress, 1)
+	//fmt.Printf("want %v", want)
+	for i := 0; i < b.N; i++ {
+		paymentsF := s.SumPaymentsWithProgress()
+	//	fmt.Print(paymentsF)
 		
-// 	//	chanel = paymentsF
-// 		// for j := range paymentsF {
-// 		// 	log.Print(j)
-// 		// }
-// 		resultChanel := <- paymentsF
-// 		log.Print(resultChanel)
-// 		result := resultChanel.Result
-// 		if result != want {
-// 			b.Fatalf("invalid result, result %v, want %v", result, want)
-// 		}
-// 	}
-// 	//fmt.Printf("result %v", result)
-// }
+	//	chanel = paymentsF
+		// for j := range paymentsF {
+		// 	log.Print(j)
+		// }
+		resultChanel := <- paymentsF
+		log.Printf("resultChanel %v", resultChanel)
+		result := resultChanel.Result
+		if result != want {
+			b.Fatalf("invalid result, result %v, want %v", result, want)
+		}
+	}
+	//fmt.Printf("result %v", result)
+}
