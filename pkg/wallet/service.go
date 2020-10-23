@@ -1681,12 +1681,14 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 	channels := make([]<-chan Progress, parts)
 	for i := 0; i < parts; i++ {
 		// endVal := (i+1)*size
-		// if (i == parts-1) && (endVal < len(foundPayments)) {
-		// 	endVal = len(foundPayments)
-		// }
+		
 		ch := make(chan Progress)
 		channels[i] = ch
 		foundPaymentsParts := foundPayments[i*size:(i+1)*size]
+		if (i == parts-1) && (((i+1)*size) < len(foundPayments)) {
+			foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
+			
+		}
 		go func(ch chan<- Progress, foundPayments []types.Payment) {
 			defer close(ch)
 			sum := Progress{}
