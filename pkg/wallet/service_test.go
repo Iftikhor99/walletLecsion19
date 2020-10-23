@@ -551,14 +551,14 @@ func TestService_Import_Success(t *testing.T) {
 // 		fmt.Println("Аккаунт пользователя не найден")
 // 		//return
 // 	}
-// 	data := make([]int, 10_000_001)
-// 	for j := 1; j < 10_000_001; j++ {
+// 	data := make([]int, 10_0)
+// 	for j := 1; j < 10_1; j++ {
 // 		_, _ = s.Pay(1, types.Money(j), "food")
 				
 // 	}
 // 	log.Print(len(data))
 	
-// 	want := types.Money(5050) 
+// 	want := Progress{}
 // 	//chanel := make(chan Progress, 1)
 // 	//fmt.Printf("want %v", want)
 // 	for i := 0; i < b.N; i++ {
@@ -570,8 +570,9 @@ func TestService_Import_Success(t *testing.T) {
 // 		// 	log.Print(j)
 // 		// }
 // 		resultChanel := <- paymentsF
+// 		//defer close(paymentsF)
 // 		log.Printf("resultChanel %v", resultChanel)
-// 		result := resultChanel.Result
+// 		result := resultChanel
 // 		if result != want {
 // 			b.Fatalf("invalid result, result %v, want %v", result, want)
 // 		}
