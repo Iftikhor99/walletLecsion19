@@ -1,7 +1,7 @@
 package wallet
 
 import (
-//	"log"
+	"log"
 	"os"
 	"fmt"
 	"reflect"
@@ -557,20 +557,21 @@ func TestService_Import_Success(t *testing.T) {
 				
 // 	}
 // 	log.Print(len(data))
-// 	ch := make(chan Progress,1)
-// 	defer close(ch)	
-// 	sum := Progress{} 
-						
-// 	ch<- sum
-// 	<- ch
-// 	want := ch
 	
+// 	want := types.Money(5050) 
+// 	//chanel := make(chan Progress, 1)
 // 	//fmt.Printf("want %v", want)
 // 	for i := 0; i < b.N; i++ {
 // 		paymentsF := s.SumPaymentsWithProgress()
 // 	//	fmt.Print(paymentsF)
 		
-// 		result := paymentsF
+// 	//	chanel = paymentsF
+// 		// for j := range paymentsF {
+// 		// 	log.Print(j)
+// 		// }
+// 		resultChanel := <- paymentsF
+// 		log.Print(resultChanel)
+// 		result := resultChanel.Result
 // 		if result != want {
 // 			b.Fatalf("invalid result, result %v, want %v", result, want)
 // 		}

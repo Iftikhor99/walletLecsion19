@@ -1541,11 +1541,11 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 	size := lenPay/goroutines
 	i:= 0
 	go func(foundPayments []types.Payment){
-	 
+	defer wg.Done()
 	
 		
 		for i := 0; i < goroutines; i++ {	
-			defer wg.Done()
+			
 			var newPayments []types.Payment
 			data := foundPayments[i*size:(i+1)*size]			 
 			for _, v := range data{
@@ -1578,6 +1578,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	
 	ch := make(chan Progress,1)
 	defer close(ch)
+	partSum := Progress{}
 
 	foundPayments, err := s.ExportAccountHistoryWithoutID()
 	if err != nil {
@@ -1596,8 +1597,14 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	// if goroutines <= 1 {
 	// 	return types.Money(0), nil
 	// }
-	goroutines := 1
-
+	goroutines := 10
+	// if goroutines <= 1 {
+	// 	sum := Progress{} 
+						
+	// 		ch<- sum
+	// 		<- ch
+	// 	return foundPayments, nil
+	// }
 	wg := sync.WaitGroup{}
 
 	wg.Add(goroutines) // cKonbKOo ropyTMH péM
@@ -1625,7 +1632,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	total := types.Money(0)
 	go func(foundPayments []types.Payment){
 	 
-	
+		
 		
 		for i := 0; i < goroutines; i++ {	
 			defer wg.Done()
@@ -1639,9 +1646,10 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 			
 			mu.Lock()
 			total += sum
+			
  			mu.Unlock()
 			 
-			 partSum := Progress{} 
+			// partSum := Progress{} 
 			
 			 partSum.Part = i
 			 partSum.Result = total
@@ -1652,6 +1660,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 			//<- ch
 			log.Print(val)
 			
+			
 		}
 	}(foundPayments[i*size:(i+1)*size])	
 //	
@@ -1661,21 +1670,11 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 
 	
 	
-		go func(){
-			sum := Progress{} 
-			
-				sum.Part = 1
-				sum.Result = total
-				
-			
-			ch<- sum
-			<- ch
-		}()
-		
-	
-
 	
 	log.Print(total)
+	ch<- partSum
+	val :=<- ch
+	log.Print(val)
 	return ch
 		
 }
