@@ -1,7 +1,7 @@
 package wallet
 
 import (
-	"log"
+//	"log"
 	"os"
 	"fmt"
 	"reflect"
