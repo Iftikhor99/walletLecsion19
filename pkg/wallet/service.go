@@ -1576,17 +1576,20 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	//	var newPayments []types.Payment
 	//var allfoundPayments []types.Payment
 	
-	ch := make(chan Progress)
+	ch := make(chan Progress,1)
 	defer close(ch)
 
 	foundPayments, err := s.ExportAccountHistoryWithoutID()
 	if err != nil {
 		log.Print(err)
-		go func(){
+		
+		
 			sum := Progress{} 
 						
 			ch<- sum
-			}()
+			<- ch
+	
+			
 		return ch
 		
 	}
@@ -1605,11 +1608,12 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	lenPay := len(foundPayments)
 	if lenPay == 0 {
 			
-		go func(){
+		
 			sum := Progress{} 
 						
 			ch<- sum
-			}()
+			<- ch
+			
 		return ch
 	}
 	
@@ -1653,6 +1657,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 				
 			
 			ch<- sum
+			<- ch
 		}()
 		
 	
