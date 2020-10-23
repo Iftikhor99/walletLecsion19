@@ -1590,7 +1590,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 			ch<- sum
 			<- ch
 	
-			
+			defer close(ch)
 		return ch
 		
 	}
@@ -1620,7 +1620,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 						
 			ch<- sum
 			<- ch
-			
+			close(ch)
 		return ch
 	}
 

@@ -552,10 +552,10 @@ func TestService_Import_Success(t *testing.T) {
 // 		//return
 // 	}
 // 	data := make([]int, 10_000_001)
-// 	for j := 1; j < 10_000_001; j++ {
-// 		_, _ = s.Pay(1, types.Money(j), "food")
+// 	// for j := 1; j < 10_000_001; j++ {
+// 	// 	_, _ = s.Pay(1, types.Money(j), "food")
 				
-// 	}
+// 	// }
 // 	log.Print(len(data))
 	
 // 	want := types.Money(5050) 
