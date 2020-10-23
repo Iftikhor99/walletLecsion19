@@ -1674,10 +1674,10 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 	foundPayments, _ := s.ExportAccountHistoryWithoutID()
 	parts := 100_000
 
-	size := len(foundPayments) / parts
-	if size < parts {
-		parts = size
-	}
+	 size := len(foundPayments) / parts
+	// if size < parts {
+	// 	parts = size
+	// }
 	channels := make([]<-chan Progress, parts)
 	for i := 0; i < parts; i++ {
 		ch := make(chan Progress)
