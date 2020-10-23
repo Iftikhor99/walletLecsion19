@@ -1674,21 +1674,36 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 	foundPayments, _ := s.ExportAccountHistoryWithoutID()
 	parts := 10
 
-	 size := len(foundPayments) / parts
+	size := len(foundPayments) / parts
 	if size < 1 {
 		parts = len(foundPayments)
 	}
-	channels := make([]<-chan Progress, parts)
+
+	var foundPaymentsParts [][]types.Payment
 	for i := 0; i < parts; i++ {
-		// endVal := (i+1)*size
+		endVal := (i+1)*size
+		if (i == parts-1) && (endVal < len(foundPayments)) {
+			endVal = len(foundPayments)
+		}
+		//	log.Print(accountID)
+		//	log.Print(payment.AccountID)
+		//if payment.AccountID == accountID {
+			foundPaymentsParts = append(foundPaymentsParts, foundPayments[i*size:endVal])
+			
+	}
+	//log.Print(len(foundPaymentsParts))
+
+	channels := make([]<-chan Progress, parts)
+	for i, payment := range foundPaymentsParts {
+		
 		
 		ch := make(chan Progress)
 		channels[i] = ch
-		foundPaymentsParts := foundPayments[i*size:(i+1)*size]
-		if (i == parts-1) && (((i+1)*size) < len(foundPayments)) {
-			foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
+		// foundPaymentsParts := foundPayments[i*size:(i+1)*size]
+		// if (i == parts-1) && (((i+1)*size) < len(foundPayments)) {
+		// 	foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
 			
-		}
+		// }
 		go func(ch chan<- Progress, foundPayments []types.Payment) {
 			defer close(ch)
 			sum := Progress{}
@@ -1697,7 +1712,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 				sum.Result += v.Amount
 			}
 			ch <- sum
-		}(ch, foundPaymentsParts)
+		}(ch, payment)
 
 	}
 
