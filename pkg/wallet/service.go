@@ -1596,7 +1596,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	// if goroutines <= 1 {
 	// 	return types.Money(0), nil
 	// }
-	goroutines := 100000
+	goroutines := 1
 
 	wg := sync.WaitGroup{}
 
@@ -1608,7 +1608,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	lenPay := len(foundPayments)
 	if lenPay == 0 {
 			
-		
+			
 			sum := Progress{} 
 						
 			ch<- sum
@@ -1616,9 +1616,11 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 			
 		return ch
 	}
+
 	
-	//parts := 5
-	size := lenPay/goroutines
+	
+	parts := 100_000
+	size := lenPay/parts
 	i:= 0
 	total := types.Money(0)
 	go func(foundPayments []types.Payment){
@@ -1638,7 +1640,17 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 			mu.Lock()
 			total += sum
  			mu.Unlock()
+			 
+			 partSum := Progress{} 
 			
+			 partSum.Part = i
+			 partSum.Result = total
+			 
+		 
+		 	ch<- partSum
+			val :=<- ch
+			//<- ch
+			log.Print(val)
 			
 		}
 	}(foundPayments[i*size:(i+1)*size])	

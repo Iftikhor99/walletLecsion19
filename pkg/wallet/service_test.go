@@ -1,6 +1,7 @@
 package wallet
 
 import (
+//	"log"
 	"os"
 	"fmt"
 	"reflect"
@@ -550,18 +551,19 @@ func TestService_Import_Success(t *testing.T) {
 // 		fmt.Println("Аккаунт пользователя не найден")
 // 		//return
 // 	}
-// 	//data := make([]int, 10_000_001)
-// 	// for j := 1; j < 10; j++ {
-// 	// 	_, _ = s.Pay(1, types.Money(j), "food")
+// 	data := make([]int, 10_000_001)
+// 	for j := 1; j < 10_000_001; j++ {
+// 		_, _ = s.Pay(1, types.Money(j), "food")
 				
-// 	// }
+// 	}
+// 	log.Print(len(data))
 // 	ch := make(chan Progress,1)
 // 	defer close(ch)	
 // 	sum := Progress{} 
 						
 // 	ch<- sum
 // 	<- ch
-// 	want := ch 
+// 	want := ch
 	
 // 	//fmt.Printf("want %v", want)
 // 	for i := 0; i < b.N; i++ {
