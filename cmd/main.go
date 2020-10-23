@@ -172,6 +172,63 @@ func main() {
 	// 	data[i] =i
 	// }
 	
+	// for i := 1; i< 101; i++ {
+	// 	_, _ = svc.Pay(1, types.Money(i), "food")
+						
+ 	// }
+	// foundPayments, _ := svc.ExportAccountHistoryWithoutID()
+	// parts := 10
+
+	// size := len(foundPayments)/parts
+	// channels := make([]<-chan Progress, parts) 
+	// for i := 0; i < parts; i++ {
+	// 	ch := make(chan Progress)
+	// 	channels[i] = ch
+	// 	go func(ch chan<- Progress, foundPayments []types.Payment){
+	// 		defer close(ch)
+	// 		sum := Progress{}
+	// 		for j, v := range foundPayments{
+	// 			sum.Part += j
+	// 			sum.Result += v.Amount
+	// 		}
+	// 		ch<- sum
+	// 	}(ch, foundPayments[i*size:(i+1)*size])
+		
+	// }
+
+	// total := Progress{}
+	// for value := range 	merge(channels) {
+	// 	total.Part += value.Part
+	// 	total.Result += value.Result
+	// }
+	// log.Print(total)
+	total := payProces()
+	log.Print(total)	
+	// svc.SumPaymentsWithProgress()
+
+}
+
+func payProces() Progress {
+	svc := &wallet.Service{}
+	accountTest1, err1 := svc.RegisterAccount("+992000000001")
+	if err1 != nil {
+		fmt.Println(err1)
+		
+	}
+
+	err1 = svc.Deposit(accountTest1.ID, 100_000_00)
+	if err1 != nil {
+		switch err1 {
+		case wallet.ErrAmountMustBePositive:
+			fmt.Println("Сумма должна быть положительной")
+		case wallet.ErrAccountNotFound:
+			fmt.Println("Аккаунт пользователя не найден")
+		}
+		
+	}
+	fmt.Println(accountTest1.Balance)
+
+
 	for i := 1; i< 101; i++ {
 		_, _ = svc.Pay(1, types.Money(i), "food")
 						
@@ -202,42 +259,8 @@ func main() {
 		total.Result += value.Result
 	}
 	log.Print(total)
-	// total := payProces()
-	// log.Print(total)	
-	// svc.SumPaymentsWithProgress()
-
+	return total
 }
-
-// func payProces() Progress {
-// 	svc := &wallet.Service{}
-// 	foundPayments, _ := svc.ExportAccountHistoryWithoutID()
-// 	parts := 10
-
-// 	size := len(foundPayments)/parts
-// 	channels := make([]<-chan Progress, parts) 
-// 	for i := 0; i < parts; i++ {
-// 		ch := make(chan Progress)
-// 		channels[i] = ch
-// 		go func(ch chan<- Progress, foundPayments []types.Payment){
-// 			defer close(ch)
-// 			sum := Progress{}
-// 			for j, v := range foundPayments{
-// 				sum.Part += j
-// 				sum.Result += v.Amount
-// 			}
-// 			ch<- sum
-// 		}(ch, foundPayments[i*size:(i+1)*size])
-		
-// 	}
-
-// 	total := Progress{}
-// 	for value := range 	merge(channels) {
-// 		total.Part += value.Part
-// 		total.Result += value.Result
-// 	}
-// 	log.Print(total)
-// 	return total
-// }
 
 func merge(channels []<-chan Progress) <-chan Progress {
 	wg := sync.WaitGroup{}
