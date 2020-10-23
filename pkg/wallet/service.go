@@ -1672,9 +1672,12 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 
 	foundPayments, _ := s.ExportAccountHistoryWithoutID()
-	parts := 10
+	parts := 100_000
 
 	size := len(foundPayments) / parts
+	if size < parts {
+		parts = size
+	}
 	channels := make([]<-chan Progress, parts)
 	for i := 0; i < parts; i++ {
 		ch := make(chan Progress)
@@ -1696,7 +1699,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 	//	defer close(final)
 	//testP := merge(channels)
 	//log.Print(testP)
-	mergedAll := make(chan Progress)
+	//mergedAll := make(chan Progress)
 	for value := range merge(channels) {
 		log.Print(value)
 		wg := sync.WaitGroup{}
@@ -1710,13 +1713,19 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 					merged <- val
 				}
 			}(ch)
+			
 		}
 
 		go func() {
+			
 			defer close(merged)
 			wg.Wait()
+			
 		}()
-		mergedAll = merged
+		return merged
+		//	mergedAll <- val
+		
+		//mergedAll <- merged
 		//return merged
 		// total.Part += value.Part
 		// total.Result += value.Result
@@ -1729,7 +1738,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress  {
 	// final <- total
 	// <- final
 	// // svc.SumPaymentsWithProgress()
-	return mergedAll
+	return nil
 
 }
 
