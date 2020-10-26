@@ -558,7 +558,7 @@ func BenchmarkFilterPaymentsNew(b *testing.B) {
 // 	}
 // 	log.Print(len(data))
 	
-// 	want := Progress{}
+// 	want := types.Progress{}
 // 	want.Part = 49999500000
 // 	want.Result = 500000500000
 // 	//chanel := make(chan Progress, 1)

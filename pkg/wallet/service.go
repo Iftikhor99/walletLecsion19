@@ -47,11 +47,6 @@ type Service struct {
 	favorites     []*types.Favorite
 }
 
-//Progress for
-type Progress struct {
-	Part   int
-	Result types.Money
-}
 
 //RegisterAccount for
 func (s *Service) RegisterAccount(phone types.Phone) (*types.Account, error) {
@@ -1669,7 +1664,7 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 // }
 
 //SumPaymentsWithProgress for
-func (s *Service) SumPaymentsWithProgress() <-chan Progress {
+func (s *Service) SumPaymentsWithProgress() <-chan types.Progress {
 
 	foundPayments, _ := s.ExportAccountHistoryWithoutID()
 	totalManual := types.Money(0)
@@ -1679,7 +1674,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	log.Print(len(foundPayments))
 	log.Print(totalManual)
 	//parts := 2
-	ch := make(chan Progress)
+	ch := make(chan types.Progress)
 	wg := sync.WaitGroup{}
 	size := 100_000
 	parts := len(foundPayments) / size
@@ -1764,9 +1759,9 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 		// 	// 	endVal += remainingValues
 		// 	// }
 		// }
-		go func(ch chan<- Progress, foundPayments []types.Payment) {
+		go func(ch chan<- types.Progress, foundPayments []types.Payment) {
 			defer wg.Done()
-			sum := Progress{}
+			sum := types.Progress{}
 
 			for j, v := range foundPayments {
 				sum.Part += j
@@ -1780,9 +1775,9 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	if len(foundPayments) > size  {
 		wg.Add(1)
 		foundPayments = foundPayments[:]
-		go func(ch chan<- Progress, foundPayments []types.Payment) {
+		go func(ch chan<- types.Progress, foundPayments []types.Payment) {
 			defer wg.Done()
-			sum := Progress{}
+			sum := types.Progress{}
 
 			for j, v := range foundPayments {
 				sum.Part += j
@@ -1848,13 +1843,13 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	//return newCh
 }
 
-func merge(channels []<-chan Progress) <-chan Progress {
+func merge(channels []<-chan types.Progress) <-chan types.Progress {
 	wg := sync.WaitGroup{}
 	wg.Add(len(channels))
-	merged := make(chan Progress)
+	merged := make(chan types.Progress)
 
 	for _, ch := range channels {
-		go func(ch <-chan Progress) {
+		go func(ch <-chan types.Progress) {
 			defer wg.Done()
 			for val := range ch {
 				merged <- val
