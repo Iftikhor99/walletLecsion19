@@ -1691,8 +1691,8 @@ func (s *Service) SumPaymentsWithProgress() <-chan types.Progress {
 				sum:= types.Progress{}
 
 				for _, value := range s.payments{
-					sum.Result+=value.Amount
-				}	
+					sum.Part+=int(value.Amount)
+				}		
 					// sum.Part = i
 					// prog.Result = sum
 					ch<- sum
