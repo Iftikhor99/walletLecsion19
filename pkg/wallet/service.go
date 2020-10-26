@@ -47,6 +47,11 @@ type Service struct {
 	favorites     []*types.Favorite
 }
 
+//Progress for
+type Progress struct {
+	Part   int
+	Result types.Money
+}
 
 //RegisterAccount for
 func (s *Service) RegisterAccount(phone types.Phone) (*types.Account, error) {
@@ -606,7 +611,7 @@ func (s *Service) Import(dir string) error {
 
 	dirAccount := dir + "/accounts.dump"
 	fileAccount, err := os.Open(dirAccount)
-	//log.Print(dirAccount)
+	log.Print(dirAccount)
 	if err != nil {
 		log.Print(err)
 		err = ErrFileNotFound
@@ -619,7 +624,7 @@ func (s *Service) Import(dir string) error {
 			}
 		}()
 
-	//	log.Printf("%#v", fileAccount)
+		log.Printf("%#v", fileAccount)
 
 		content := make([]byte, 0)
 		buf := make([]byte, 4)
@@ -636,7 +641,7 @@ func (s *Service) Import(dir string) error {
 		//log.Print(data)
 		//log.Print(newData)
 
-		for _, stroka := range newData {
+		for ind1, stroka := range newData {
 			//log.Print(stroka)
 			account := &types.Account{}
 			newData2 := strings.Split(stroka, ";")
@@ -658,7 +663,7 @@ func (s *Service) Import(dir string) error {
 
 				}
 
-			//	log.Print(ind1)
+				log.Print(ind1)
 
 			}
 			errExist := 1
@@ -675,7 +680,11 @@ func (s *Service) Import(dir string) error {
 				s.accounts = append(s.accounts, account)
 			}
 		}
-		
+		for _, account := range s.accounts {
+			//	if account.Phone == phone {
+			log.Print(account)
+			//	}
+		}
 	}
 
 	dirPayment := dir + "/payments.dump"
@@ -692,7 +701,7 @@ func (s *Service) Import(dir string) error {
 			}
 		}()
 
-	//	log.Printf("%#v", filePayments)
+		log.Printf("%#v", filePayments)
 
 		contentPayment := make([]byte, 0)
 		bufPayment := make([]byte, 4)
@@ -709,7 +718,7 @@ func (s *Service) Import(dir string) error {
 		//log.Print(data)
 		//log.Print(newData)
 
-		for _, stroka := range newDataPayment {
+		for ind1, stroka := range newDataPayment {
 			//log.Print(stroka)
 			payment := &types.Payment{}
 			newData2 := strings.Split(stroka, ";")
@@ -740,7 +749,7 @@ func (s *Service) Import(dir string) error {
 					payment.Status = types.PaymentStatus(stroka2)
 				}
 
-			//	log.Print(ind1)
+				log.Print(ind1)
 
 			}
 			errExist := 1
@@ -759,7 +768,11 @@ func (s *Service) Import(dir string) error {
 				s.payments = append(s.payments, payment)
 			}
 		}
-		
+		for _, payment := range s.payments {
+			//	if account.Phone == phone {
+			log.Print(payment)
+			//	}
+		}
 	}
 
 	dirFavorite := dir + "/favorites.dump"
@@ -776,7 +789,7 @@ func (s *Service) Import(dir string) error {
 			}
 		}()
 
-//		log.Printf("%#v", fileFavorites)
+		log.Printf("%#v", fileFavorites)
 
 		contentFavorite := make([]byte, 0)
 		bufFavorite := make([]byte, 4)
@@ -793,7 +806,7 @@ func (s *Service) Import(dir string) error {
 		//log.Print(data)
 		//log.Print(newData)
 
-		for _, stroka := range newDataFavorite {
+		for ind1, stroka := range newDataFavorite {
 			//log.Print(stroka)
 			favorite := &types.Favorite{}
 			newData2 := strings.Split(stroka, ";")
@@ -823,7 +836,7 @@ func (s *Service) Import(dir string) error {
 					favorite.Category = types.PaymentCategory(stroka2)
 				}
 
-			//	log.Print(ind1)
+				log.Print(ind1)
 
 			}
 			errExist := 1
@@ -842,7 +855,11 @@ func (s *Service) Import(dir string) error {
 				s.favorites = append(s.favorites, favorite)
 			}
 		}
-		
+		for _, favorite := range s.favorites {
+			//	if account.Phone == phone {
+			log.Print(favorite)
+			//	}
+		}
 	}
 	return nil
 
@@ -1652,58 +1669,158 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 // }
 
 //SumPaymentsWithProgress for
-func (s *Service) SumPaymentsWithProgress() <-chan types.Progress {
+func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 
-	ch := make(chan types.Progress,1)
-	defer close(ch)
-	// if err!= nil {
-	// 	return err
-	// }
-	// defer close(ch)
-	// if payment == nil {
-	// 	return ch
-	// }
-	// prog :=Progress{}
-	// if payment == nil {
-	// 	// sum := Progress{} 			
-	// 	// ch<- sum
-	// 	// <- ch
-	// 	// close(ch)
-	// 	return ch
-	// }
-	if s.payments == nil {
-		return ch
+	foundPayments, _ := s.ExportAccountHistoryWithoutID()
+	totalManual := types.Money(0)
+	for _, t := range foundPayments {
+		totalManual += t.Amount
 	}
+	log.Print(len(foundPayments))
+	log.Print(totalManual)
+	//parts := 2
+	ch := make(chan Progress)
+	wg := sync.WaitGroup{}
+	size := 100_000
+	parts := len(foundPayments) / size
+	//parts := int(math.Ceil(float64((len(foundPayments) + 1) / size)))
+	// remainingValues1 := len(foundPayments)/size
+	// remainingValues2 := len(foundPayments)-remainingValues1*size
+	// if remainingValues2 != 0 {
+	// 	parts = parts + 1
+	// }
 	
-	// channel:=make([]<-chan int, parts)
-	// goroutines:=1
-	// i:=0
-	// mu := sync.Mutex{}
-	wg := sync.WaitGroup{}	
-	wg.Add(1)
-		// if lenPayment < size {
-		// 	payments = payment
-		// 	log.Print("payments ", payments)
-		// } else {
-		// }
-		go func(ch chan types.Progress){
-				defer wg.Done()
-				sum:= types.Progress{}
 
-				for _, value := range s.payments{
-					sum.Part+=int(value.Amount)
-				}		
-					// sum.Part = i
-					// prog.Result = sum
-					ch<- sum
-				
-		}(ch)
-
-	
+	if parts == 0 {
+		parts = 1
+	}
+	// if len(foundPayments) < 1 {
+	// 	parts = len(foundPayments)
 		
-	wg.Wait()
-	return ch
+	// 	sum := Progress{}
+	// 	go func() {
+	// 	ch <- sum
 
+		
+	// 	// 	<-ch
+	// 	// 	//<-newCh
+	// 	// 	defer close(ch)
+
+	// 	}()
+	// 	// return ch
+	// 	//size = 0
+	// }
+	if len(foundPayments) < size  {
+		parts = 1
+	//	size = len(foundPayments)
+	}
+	// if size > len(foundPayments) {
+	// 	parts = 1
+	// 	size = len(foundPayments)
+	// }
+
+	if size < len(foundPayments) {
+		size = len(foundPayments)
+
+	}
+
+	// var foundPaymentsParts [][]types.Payment
+	// for i := 0; i < parts; i++ {
+	// 	endVal := (i+1)*size
+	// 	if (i == parts-1) && (endVal < len(foundPayments)) {
+	// 		endVal = len(foundPayments)
+	// 	}
+	// 	//	log.Print(accountID)
+	// 	//	log.Print(payment.AccountID)
+	// 	//if payment.AccountID == accountID {
+	// 		foundPaymentsParts = append(foundPaymentsParts, foundPayments[i*size:endVal])
+
+	// }
+	//log.Print(len(foundPaymentsParts))
+
+	//	defer close(ch)
+	//parts := 2
+	//size := len(data)/parts
+	if len(foundPayments) < size  {
+	for i := 0; i < parts; i++ {
+		wg.Add(1)
+		
+		endVal := (i + 1) * size
+		if len(foundPayments) < 1{
+			endVal = 0
+		}
+		//if (i == parts-1) && (endVal < len(foundPayments)) {
+		// 	endVal = len(foundPayments)
+		// //}
+		// if endVal > len(foundPayments[i*size:(i+1)*size]) {
+		// 	// 	foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
+		// 	//	indexVal = len(foundPayments)
+		// 	log.Print("wwww")
+		// 	endVal = endVal - len(foundPayments[i*size:endVal])
+		// 	log.Print(endVal)
+		// 	// if i == parts-1 {
+		// 	// 	remainingValues := len(foundPayments)/size
+		// 	// 	remainingValues = len(foundPayments)-remainingValues*size
+		// 	// 	endVal += remainingValues
+		// 	// }
+		// }
+		go func(ch chan<- Progress, foundPayments []types.Payment) {
+			defer wg.Done()
+			sum := Progress{}
+
+			for j, v := range foundPayments {
+				sum.Part += j
+				sum.Result += v.Amount
+			}
+			ch <- sum
+		}(ch, foundPayments[i*size:endVal])
+		//return ch
+	}
+	}
+	if len(foundPayments) > size  {
+		wg.Add(1)
+		foundPayments = foundPayments[:]
+		go func(ch chan<- Progress, foundPayments []types.Payment) {
+			defer wg.Done()
+			sum := Progress{}
+
+			for j, v := range foundPayments {
+				sum.Part += j
+				sum.Result += v.Amount
+			}
+			ch <- sum
+		}(ch, foundPayments)
+	}
+	// total := Progress{}
+	// for i := 0; i < parts; i++ {
+	// //	go func() {
+	// 	value := <- ch
+	// 	total.Part += value.Part
+	// 	total.Result += value.Result
+		
+	//	}()
+	//	return ch
+	// }
+	// 	log.Print(total)
+	// 	// go func() {
+
+		// 	ch <- total
+		// }()
+	//	return ch
+	
+	// go func() {
+		
+	// }()
+	go func() {
+		
+
+	//	<-ch
+		
+		//<-newCh
+		defer close(ch)
+		wg.Wait()
+	}()
+	return ch
 
 	// total := Progress{}
 	// for i := 0; i < parts; i++ {
@@ -1731,23 +1848,23 @@ func (s *Service) SumPaymentsWithProgress() <-chan types.Progress {
 	//return newCh
 }
 
-// func merge(channels []<-chan types.Progress) <-chan types.Progress {
-// 	wg := sync.WaitGroup{}
-// 	wg.Add(len(channels))
-// 	merged := make(chan types.Progress)
+func merge(channels []<-chan Progress) <-chan Progress {
+	wg := sync.WaitGroup{}
+	wg.Add(len(channels))
+	merged := make(chan Progress)
 
-// 	for _, ch := range channels {
-// 		go func(ch <-chan types.Progress) {
-// 			defer wg.Done()
-// 			for val := range ch {
-// 				merged <- val
-// 			}
-// 		}(ch)
-// 	}
+	for _, ch := range channels {
+		go func(ch <-chan Progress) {
+			defer wg.Done()
+			for val := range ch {
+				merged <- val
+			}
+		}(ch)
+	}
 
-// 	go func() {
-// 		defer close(merged)
-// 		wg.Wait()
-// 	}()
-// 	return merged
-// }
+	go func() {
+		defer close(merged)
+		wg.Wait()
+	}()
+	return merged
+}
