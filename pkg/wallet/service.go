@@ -1741,25 +1741,29 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	//	defer close(ch)
 	//parts := 2
 	//size := len(data)/parts
-	if len(foundPayments) < size{
+	if len(foundPayments) < size  {
 	for i := 0; i < parts; i++ {
 		wg.Add(1)
+		
 		endVal := (i + 1) * size
+		if len(foundPayments) < 1{
+			endVal = 0
+		}
 		//if (i == parts-1) && (endVal < len(foundPayments)) {
 		// 	endVal = len(foundPayments)
 		// //}
-		if endVal > len(foundPayments[i*size:(i+1)*size]) {
-			// 	foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
-			//	indexVal = len(foundPayments)
-			log.Print("wwww")
-			endVal = endVal - len(foundPayments[i*size:endVal])
-			log.Print(endVal)
-			// if i == parts-1 {
-			// 	remainingValues := len(foundPayments)/size
-			// 	remainingValues = len(foundPayments)-remainingValues*size
-			// 	endVal += remainingValues
-			// }
-		}
+		// if endVal > len(foundPayments[i*size:(i+1)*size]) {
+		// 	// 	foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
+		// 	//	indexVal = len(foundPayments)
+		// 	log.Print("wwww")
+		// 	endVal = endVal - len(foundPayments[i*size:endVal])
+		// 	log.Print(endVal)
+		// 	// if i == parts-1 {
+		// 	// 	remainingValues := len(foundPayments)/size
+		// 	// 	remainingValues = len(foundPayments)-remainingValues*size
+		// 	// 	endVal += remainingValues
+		// 	// }
+		// }
 		go func(ch chan<- Progress, foundPayments []types.Payment) {
 			defer wg.Done()
 			sum := Progress{}
