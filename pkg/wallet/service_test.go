@@ -495,72 +495,72 @@ func BenchmarkFilterPaymentsNew(b *testing.B) {
 	//fmt.Printf("result %v", result)
 }
 
-func BenchmarkSumPaymentsWithProgress(b *testing.B) {
-	s := newTestService()
+// func BenchmarkSumPaymentsWithProgress(b *testing.B) {
+// 	s := newTestService()
 	
-	accountTest, err := s.RegisterAccount("+992000000001")
-	if err != nil {
-		fmt.Print(err)		
-	}
-	err = s.Deposit(accountTest.ID, 2_000_000_000_000_000)
-	if err != nil {
-		fmt.Println("Аккаунт пользователя не найден")
-		//return
-	}
+// 	accountTest, err := s.RegisterAccount("+992000000001")
+// 	if err != nil {
+// 		fmt.Print(err)		
+// 	}
+// 	err = s.Deposit(accountTest.ID, 2_000_000_000_000_000)
+// 	if err != nil {
+// 		fmt.Println("Аккаунт пользователя не найден")
+// 		//return
+// 	}
 	
-	for j := 1; j < 1_000_522; j++ {
-		_, _ = s.Pay(1, types.Money(1), "food")				
-	}
+// 	for j := 1; j < 1_000_522; j++ {
+// 		_, _ = s.Pay(1, types.Money(1), "food")				
+// 	}
 	
-	want := types.Progress{}
-	want.Part = 1000520
-	want.Result = 1000521
+// 	want := types.Progress{}
+// 	want.Part = 1000520
+// 	want.Result = 1000521
 	
-	for i := 0; i < b.N; i++ {
-		paymentsF := s.SumPaymentsWithProgress()
+// 	for i := 0; i < b.N; i++ {
+// 		paymentsF := s.SumPaymentsWithProgress()
 	
-		resultChanel := <- paymentsF
-		result := resultChanel
-		if result != want {
-			b.Fatalf("invalid result, result %v, want %v", result, want)
-		}
-	}
-}
+// 		resultChanel := <- paymentsF
+// 		result := resultChanel
+// 		if result != want {
+// 			b.Fatalf("invalid result, result %v, want %v", result, want)
+// 		}
+// 	}
+// }
 
-func BenchmarkSumPaymentsWithProgress_NoPayment(b *testing.B) {
-	s := newTestService()
+// func BenchmarkSumPaymentsWithProgress_NoPayment(b *testing.B) {
+// 	s := newTestService()
 	
-	accountTest, err := s.RegisterAccount("+992000000001")
-	if err != nil {
-		fmt.Print(err)
+// 	accountTest, err := s.RegisterAccount("+992000000001")
+// 	if err != nil {
+// 		fmt.Print(err)
 		
-	}
-	err = s.Deposit(accountTest.ID, 2_000_000_000_000_000)
-	if err != nil {
-		fmt.Println("Аккаунт пользователя не найден")
-		//return
-	}
+// 	}
+// 	err = s.Deposit(accountTest.ID, 2_000_000_000_000_000)
+// 	if err != nil {
+// 		fmt.Println("Аккаунт пользователя не найден")
+// 		//return
+// 	}
 	
-	// for j := 1; j < 1_000_522; j++ {
-	// 	_, _ = s.Pay(1, types.Money(1), "food")
+// 	// for j := 1; j < 1_000_522; j++ {
+// 	// 	_, _ = s.Pay(1, types.Money(1), "food")
 				
-	// }
+// 	// }
 	
 	
-	want := types.Progress{}
-	want.Part = 0
-	want.Result = 0
+// 	want := types.Progress{}
+// 	want.Part = 0
+// 	want.Result = 0
 	
-	for i := 0; i < b.N; i++ {
-		paymentsF := s.SumPaymentsWithProgress()
+// 	for i := 0; i < b.N; i++ {
+// 		paymentsF := s.SumPaymentsWithProgress()
 	
-		resultChanel := <- paymentsF
-		//defer close(paymentsF)
-//		log.Printf("resultChanel %v", resultChanel.Result)
-		result := resultChanel
-		if result != want {
-			b.Fatalf("invalid result, result %v, want %v", result, want)
-		}
-	}
-	//fmt.Printf("result %v", result)
-}
+// 		resultChanel := <- paymentsF
+// 		//defer close(paymentsF)
+// //		log.Printf("resultChanel %v", resultChanel.Result)
+// 		result := resultChanel
+// 		if result != want {
+// 			b.Fatalf("invalid result, result %v, want %v", result, want)
+// 		}
+// 	}
+// 	//fmt.Printf("result %v", result)
+// }
