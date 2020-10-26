@@ -1814,7 +1814,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	go func() {
 		
 
-	//	<-ch
+		<-ch
 		
 		//<-newCh
 		defer close(ch)
