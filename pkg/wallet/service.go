@@ -1694,22 +1694,22 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	if parts == 0 {
 		parts = 1
 	}
-	if len(foundPayments) < 1 {
-		parts = len(foundPayments)
+	// if len(foundPayments) < 1 {
+	// 	parts = len(foundPayments)
 		
-		sum := Progress{}
-		go func() {
-		ch <- sum
+	// 	sum := Progress{}
+	// 	go func() {
+	// 	ch <- sum
 
 		
-		// 	<-ch
-		// 	//<-newCh
-		// 	defer close(ch)
+	// 	// 	<-ch
+	// 	// 	//<-newCh
+	// 	// 	defer close(ch)
 
-		}()
-		// return ch
-		//size = 0
-	}
+	// 	}()
+	// 	// return ch
+	// 	//size = 0
+	// }
 	if len(foundPayments) < size  {
 		parts = 1
 	//	size = len(foundPayments)
@@ -1814,7 +1814,7 @@ func (s *Service) SumPaymentsWithProgress() <-chan Progress {
 	go func() {
 		
 
-		<-ch
+	//	<-ch
 		
 		//<-newCh
 		defer close(ch)
