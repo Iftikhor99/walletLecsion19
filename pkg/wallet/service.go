@@ -1667,12 +1667,12 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 func (s *Service) SumPaymentsWithProgress() <-chan types.Progress {
 
 	foundPayments, _ := s.ExportAccountHistoryWithoutID()
-	totalManual := types.Money(0)
-	for _, t := range foundPayments {
-		totalManual += t.Amount
-	}
-	log.Print(len(foundPayments))
-	log.Print(totalManual)
+	// totalManual := types.Money(0)
+	// for _, t := range foundPayments {
+	// 	totalManual += t.Amount
+	// }
+	// log.Print(len(foundPayments))
+	// log.Print(totalManual)
 	//parts := 2
 	ch := make(chan types.Progress)
 	wg := sync.WaitGroup{}
