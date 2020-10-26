@@ -43,8 +43,8 @@ type Account struct {
     Balance Money 
 }
 
-//Progress for
-type Progress struct {
-	Part   int
-	Result Money
-}
+// //Progress for
+// type Progress struct {
+// 	Part   int
+// 	Result Money
+// }

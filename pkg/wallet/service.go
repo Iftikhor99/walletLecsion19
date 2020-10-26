@@ -1668,191 +1668,46 @@ func (s *Service) FilterPaymentsNew(accountID int64, goroutines int) ([]types.Pa
 
 // }
 
-//SumPaymentsWithProgress for
+//SumPaymentsWithProgress ..
 func (s *Service) SumPaymentsWithProgress() <-chan Progress {
-
-	foundPayments, _ := s.ExportAccountHistoryWithoutID()
-	totalManual := types.Money(0)
-	for _, t := range foundPayments {
-		totalManual += t.Amount
-	}
-	log.Print(len(foundPayments))
-	log.Print(totalManual)
-	//parts := 2
-	ch := make(chan Progress)
-	wg := sync.WaitGroup{}
-	size := 100_000
-	parts := len(foundPayments) / size
-	//parts := int(math.Ceil(float64((len(foundPayments) + 1) / size)))
-	// remainingValues1 := len(foundPayments)/size
-	// remainingValues2 := len(foundPayments)-remainingValues1*size
-	// if remainingValues2 != 0 {
-	// 	parts = parts + 1
-	// }
-	
-
-	if parts == 0 {
-		parts = 1
-	}
-	// if len(foundPayments) < 1 {
-	// 	parts = len(foundPayments)
-		
-	// 	sum := Progress{}
-	// 	go func() {
-	// 	ch <- sum
-
-		
-	// 	// 	<-ch
-	// 	// 	//<-newCh
-	// 	// 	defer close(ch)
-
-	// 	}()
-	// 	// return ch
-	// 	//size = 0
-	// }
-	if len(foundPayments) < size  {
-		parts = 1
-	//	size = len(foundPayments)
-	}
-	// if size > len(foundPayments) {
-	// 	parts = 1
-	// 	size = len(foundPayments)
-	// }
-
-	if size < len(foundPayments) {
-		size = len(foundPayments)
-
+	if len(s.payments) == 0 {
+		ch := make(chan Progress)
+		close(ch)
+		return ch
 	}
 
-	// var foundPaymentsParts [][]types.Payment
-	// for i := 0; i < parts; i++ {
-	// 	endVal := (i+1)*size
-	// 	if (i == parts-1) && (endVal < len(foundPayments)) {
-	// 		endVal = len(foundPayments)
-	// 	}
-	// 	//	log.Print(accountID)
-	// 	//	log.Print(payment.AccountID)
-	// 	//if payment.AccountID == accountID {
-	// 		foundPaymentsParts = append(foundPaymentsParts, foundPayments[i*size:endVal])
+	const size = 100_000
+	var parts int = len(s.payments) / size
+	channels := make([]<-chan Progress, parts)
 
-	// }
-	//log.Print(len(foundPaymentsParts))
-
-	//	defer close(ch)
-	//parts := 2
-	//size := len(data)/parts
-	if len(foundPayments) < size  {
-	for i := 0; i < parts; i++ {
-		wg.Add(1)
-		
-		endVal := (i + 1) * size
-		if len(foundPayments) < 1{
-			endVal = 0
+	for i := 0; i <= parts; i++ {
+		//TODO здес будем запускат горутины
+		left := i * size
+		right := (i + 1) * size
+		if right > len(s.payments) {
+			right = len(s.payments)
 		}
-		//if (i == parts-1) && (endVal < len(foundPayments)) {
-		// 	endVal = len(foundPayments)
-		// //}
-		// if endVal > len(foundPayments[i*size:(i+1)*size]) {
-		// 	// 	foundPaymentsParts = foundPayments[i*size:len(foundPayments)]
-		// 	//	indexVal = len(foundPayments)
-		// 	log.Print("wwww")
-		// 	endVal = endVal - len(foundPayments[i*size:endVal])
-		// 	log.Print(endVal)
-		// 	// if i == parts-1 {
-		// 	// 	remainingValues := len(foundPayments)/size
-		// 	// 	remainingValues = len(foundPayments)-remainingValues*size
-		// 	// 	endVal += remainingValues
-		// 	// }
-		// }
-		go func(ch chan<- Progress, foundPayments []types.Payment) {
-			defer wg.Done()
-			sum := Progress{}
-
-			for j, v := range foundPayments {
-				sum.Part += j
-				sum.Result += v.Amount
+		ch := make(chan Progress) //здесь вы создаете канал для каждого горутину
+		go func(ch chan<- Progress, data []*types.Payment) {
+			defer close(ch)
+			total := types.Money(0)
+			for _, v := range data {
+				total += v.Amount
 			}
-			ch <- sum
-		}(ch, foundPayments[i*size:endVal])
-		//return ch
-	}
-	}
-	if len(foundPayments) > size  {
-		wg.Add(1)
-		foundPayments = foundPayments[:]
-		go func(ch chan<- Progress, foundPayments []types.Payment) {
-			defer wg.Done()
-			sum := Progress{}
-
-			for j, v := range foundPayments {
-				sum.Part += j
-				sum.Result += v.Amount
+			ch <- Progress{
+				Part:   len(data),
+				Result: total,
 			}
-			ch <- sum
-		}(ch, foundPayments)
+		}(ch, s.payments[left:right])
+		channels[i] = ch
 	}
-	// total := Progress{}
-	// for i := 0; i < parts; i++ {
-	// //	go func() {
-	// 	value := <- ch
-	// 	total.Part += value.Part
-	// 	total.Result += value.Result
-		
-	//	}()
-	//	return ch
-	// }
-	// 	log.Print(total)
-	// 	// go func() {
-
-		// 	ch <- total
-		// }()
-	//	return ch
-	
-	// go func() {
-		
-	// }()
-	go func() {
-		
-
-	//	<-ch
-		
-		//<-newCh
-		defer close(ch)
-		wg.Wait()
-	}()
-	return ch
-
-	// total := Progress{}
-	// for i := 0; i < parts; i++ {
-	// 	value := <- ch
-	// 	total.Part += value.Part
-	// 	total.Result += value.Result
-	// //	return ch
-	// }
-	//	log.Print(total)
-	// difference := totalManual - total.Result
-	// log.Print(difference)
-	// if total.Result != types.Money(0){
-	// 	//if total.Result != totalManual{
-	// 		total.Result += difference
-	// 	//}
-	// }
-
-	// newCh := make(chan Progress)
-	// go func() {
-	// 	newCh <- total
-	// //<-newCh
-	// 	defer close(newCh)
-	// }()
-
-	//return newCh
+	return merge(channels)
 }
 
 func merge(channels []<-chan Progress) <-chan Progress {
 	wg := sync.WaitGroup{}
 	wg.Add(len(channels))
 	merged := make(chan Progress)
-
 	for _, ch := range channels {
 		go func(ch <-chan Progress) {
 			defer wg.Done()
@@ -1861,7 +1716,6 @@ func merge(channels []<-chan Progress) <-chan Progress {
 			}
 		}(ch)
 	}
-
 	go func() {
 		defer close(merged)
 		wg.Wait()
