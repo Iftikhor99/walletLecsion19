@@ -606,7 +606,7 @@ func (s *Service) Import(dir string) error {
 
 	dirAccount := dir + "/accounts.dump"
 	fileAccount, err := os.Open(dirAccount)
-	log.Print(dirAccount)
+	//log.Print(dirAccount)
 	if err != nil {
 		log.Print(err)
 		err = ErrFileNotFound
@@ -619,7 +619,7 @@ func (s *Service) Import(dir string) error {
 			}
 		}()
 
-		log.Printf("%#v", fileAccount)
+	//	log.Printf("%#v", fileAccount)
 
 		content := make([]byte, 0)
 		buf := make([]byte, 4)
@@ -636,7 +636,7 @@ func (s *Service) Import(dir string) error {
 		//log.Print(data)
 		//log.Print(newData)
 
-		for ind1, stroka := range newData {
+		for _, stroka := range newData {
 			//log.Print(stroka)
 			account := &types.Account{}
 			newData2 := strings.Split(stroka, ";")
@@ -658,7 +658,7 @@ func (s *Service) Import(dir string) error {
 
 				}
 
-				log.Print(ind1)
+			//	log.Print(ind1)
 
 			}
 			errExist := 1
@@ -675,11 +675,7 @@ func (s *Service) Import(dir string) error {
 				s.accounts = append(s.accounts, account)
 			}
 		}
-		for _, account := range s.accounts {
-			//	if account.Phone == phone {
-			log.Print(account)
-			//	}
-		}
+		
 	}
 
 	dirPayment := dir + "/payments.dump"
@@ -696,7 +692,7 @@ func (s *Service) Import(dir string) error {
 			}
 		}()
 
-		log.Printf("%#v", filePayments)
+	//	log.Printf("%#v", filePayments)
 
 		contentPayment := make([]byte, 0)
 		bufPayment := make([]byte, 4)
@@ -713,7 +709,7 @@ func (s *Service) Import(dir string) error {
 		//log.Print(data)
 		//log.Print(newData)
 
-		for ind1, stroka := range newDataPayment {
+		for _, stroka := range newDataPayment {
 			//log.Print(stroka)
 			payment := &types.Payment{}
 			newData2 := strings.Split(stroka, ";")
@@ -744,7 +740,7 @@ func (s *Service) Import(dir string) error {
 					payment.Status = types.PaymentStatus(stroka2)
 				}
 
-				log.Print(ind1)
+			//	log.Print(ind1)
 
 			}
 			errExist := 1
@@ -763,11 +759,7 @@ func (s *Service) Import(dir string) error {
 				s.payments = append(s.payments, payment)
 			}
 		}
-		for _, payment := range s.payments {
-			//	if account.Phone == phone {
-			log.Print(payment)
-			//	}
-		}
+		
 	}
 
 	dirFavorite := dir + "/favorites.dump"
@@ -784,7 +776,7 @@ func (s *Service) Import(dir string) error {
 			}
 		}()
 
-		log.Printf("%#v", fileFavorites)
+//		log.Printf("%#v", fileFavorites)
 
 		contentFavorite := make([]byte, 0)
 		bufFavorite := make([]byte, 4)
@@ -801,7 +793,7 @@ func (s *Service) Import(dir string) error {
 		//log.Print(data)
 		//log.Print(newData)
 
-		for ind1, stroka := range newDataFavorite {
+		for _, stroka := range newDataFavorite {
 			//log.Print(stroka)
 			favorite := &types.Favorite{}
 			newData2 := strings.Split(stroka, ";")
@@ -831,7 +823,7 @@ func (s *Service) Import(dir string) error {
 					favorite.Category = types.PaymentCategory(stroka2)
 				}
 
-				log.Print(ind1)
+			//	log.Print(ind1)
 
 			}
 			errExist := 1
@@ -850,11 +842,7 @@ func (s *Service) Import(dir string) error {
 				s.favorites = append(s.favorites, favorite)
 			}
 		}
-		for _, favorite := range s.favorites {
-			//	if account.Phone == phone {
-			log.Print(favorite)
-			//	}
-		}
+		
 	}
 	return nil
 

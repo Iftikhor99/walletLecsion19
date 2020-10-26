@@ -429,11 +429,11 @@ func TestService_Import_Success(t *testing.T) {
 
 	payment := payments[0]
 
-	favorite, err := s.FavoritePayment(payment.ID, "Tcell")
+	_, err = s.FavoritePayment(payment.ID, "Tcell")
 	
 	err = s.Import(wd)
 	if err != nil {
-		fmt.Println(favorite)
+		
 		t.Error(err)
 		return
 	}
